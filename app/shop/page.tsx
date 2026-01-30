@@ -42,7 +42,7 @@ export default function ShopPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL")
   const [sortBy, setSortBy] = useState<string>("newest")
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
+  // const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null)
 
   const { data: fetchedProducts = [] } = useQuery({
@@ -90,10 +90,45 @@ export default function ShopPage() {
   }, [wishlist])
 
   // Filter and sort products
-  useEffect(() => {
+  // useEffect(() => {
+  //   let filtered = [...products]
+
+  //   // Filter by search
+  //   if (searchTerm) {
+  //     filtered = filtered.filter((product) =>
+  //       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       product.description.toLowerCase().includes(searchTerm.toLowerCase())
+  //     )
+  //   }
+
+  //   // Filter by category
+  //   if (selectedCategory !== "ALL") {
+  //     filtered = filtered.filter((product) => product.category === selectedCategory)
+  //   }
+
+  //   // Sort products
+  //   switch (sortBy) {
+  //     case "price-low":
+  //       filtered.sort((a, b) => a.price - b.price)
+  //       break
+  //     case "price-high":
+  //       filtered.sort((a, b) => b.price - a.price)
+  //       break
+  //     case "name":
+  //       filtered.sort((a, b) => a.name.localeCompare(b.name))
+  //       break
+  //     case "newest":
+  //     default:
+  //       filtered.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0))
+  //       break
+  //   }
+
+  //   setFilteredProducts(filtered)
+  // }, [searchTerm, selectedCategory, sortBy, products])
+
+  const filteredProducts = useMemo(() => {
     let filtered = [...products]
 
-    // Filter by search
     if (searchTerm) {
       filtered = filtered.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -101,12 +136,12 @@ export default function ShopPage() {
       )
     }
 
-    // Filter by category
     if (selectedCategory !== "ALL") {
-      filtered = filtered.filter((product) => product.category === selectedCategory)
+      filtered = filtered.filter(
+        (product) => product.category === selectedCategory
+      )
     }
 
-    // Sort products
     switch (sortBy) {
       case "price-low":
         filtered.sort((a, b) => a.price - b.price)
@@ -119,12 +154,15 @@ export default function ShopPage() {
         break
       case "newest":
       default:
-        filtered.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0))
+        filtered.sort(
+          (a, b) => Number(b.isNew) - Number(a.isNew)
+        )
         break
     }
 
-    setFilteredProducts(filtered)
-  }, [searchTerm, selectedCategory, sortBy, products])
+    return filtered
+  }, [products, searchTerm, selectedCategory, sortBy])
+
 
   const addToCart = (product: Product, selectedSize?: string, selectedColor?: string) => {
     setCart((prev) => {
