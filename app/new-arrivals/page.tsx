@@ -58,17 +58,17 @@ export default function NewArrivalsPage() {
 
           {/* Header */}
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-10 md:mb-16"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="flex items-center justify-center space-x-4 mb-4">
-              <Sparkles className="w-8 h-8" />
-              <h1 className="text-5xl md:text-6xl font-black tracking-tighter">NEW ARRIVALS</h1>
-              <Sparkles className="w-8 h-8" />
+            <div className="flex items-center justify-center space-x-2 md:space-x-4 mb-4">
+              <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
+              <h1 className="text-4xl md:text-6xl font-black tracking-tighter">NEW ARRIVALS</h1>
+              <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
             </div>
-            <p className="text-xl tracking-widest">FRESH CHAOS JUST DROPPED</p>
+            <p className="text-sm md:text-xl tracking-[0.2em] md:tracking-widest">FRESH CHAOS JUST DROPPED</p>
           </motion.div>
 
           {isLoading ? (
@@ -80,31 +80,31 @@ export default function NewArrivalsPage() {
             <>
               {/* Featured New Item */}
               <motion.div
-                className="bg-black text-white p-8 mb-16"
+                className="bg-black text-white p-6 md:p-8 mb-16"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                  <div>
+                  <div className="order-2 lg:order-1">
                     <Badge className="bg-white text-black mb-4 font-bold tracking-wider">JUST DROPPED</Badge>
-                    <h2 className="text-4xl font-black tracking-tighter mb-4 uppercase">{arrivals[0].name}</h2>
-                    <p className="text-lg mb-6 line-clamp-3">
+                    <h2 className="text-3xl md:text-4xl font-black tracking-tighter mb-4 uppercase">{arrivals[0].name}</h2>
+                    <p className="text-base md:text-lg mb-6 line-clamp-3">
                       {arrivals[0].description}
                     </p>
                     <div className="flex items-center space-x-4 mb-6">
-                      <span className="text-3xl font-black">${arrivals[0].price}</span>
+                      <span className="text-2xl md:text-3xl font-black">${arrivals[0].price}</span>
                       <Badge className="bg-white text-black">LIMITED EDITION</Badge>
                     </div>
-                    <div className="flex space-x-4">
-                      <Link href={`/product/${arrivals[0].id}`}>
-                        <Button className="bg-white text-black hover:bg-black hover:text-white border-2 border-white px-8 py-4 text-lg font-bold tracking-wider transition-all duration-300">
+                    <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                      <Link href={`/product/${arrivals[0].id}`} className="w-full sm:w-auto">
+                        <Button className="w-full bg-white text-black hover:bg-black hover:text-white border-2 border-white px-8 py-6 text-lg font-bold tracking-wider transition-all duration-300">
                           SHOP NOW
                         </Button>
                       </Link>
                       <Button
                         onClick={() => toggleWishlist(arrivals[0].id)}
-                        className="bg-black text-white border-2 border-white hover:bg-white hover:text-black px-8 py-4 text-lg font-bold tracking-wider transition-all duration-300"
+                        className="w-full sm:w-auto bg-black text-white border-2 border-white px-8 py-6 text-lg font-bold tracking-wider transition-all duration-300"
                       >
                         <Heart className={`w-5 h-5 mr-2 ${wishlist.includes(arrivals[0].id) ? "fill-current" : ""}`} />
                         WISHLIST
@@ -112,16 +112,16 @@ export default function NewArrivalsPage() {
                     </div>
                   </div>
                   <motion.div
-                    className="relative overflow-hidden"
+                    className="relative overflow-hidden order-1 lg:order-2"
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
                   >
                     <img
                       src={arrivals[0].image_url || "/placeholder.svg?height=500&width=400"}
                       alt={arrivals[0].name}
-                      className="w-full h-96 object-cover filter grayscale"
+                      className="w-full h-64 md:h-96 object-cover filter grayscale"
                     />
-                    <motion.div className="absolute inset-0 bg-white mix-blend-difference opacity-0 hover:opacity-30 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-white mix-blend-difference opacity-10 md:opacity-0 hover:opacity-30 transition-opacity duration-500" />
                   </motion.div>
                 </div>
               </motion.div>
@@ -165,10 +165,10 @@ export default function NewArrivalsPage() {
                       <motion.div className="absolute inset-0 bg-white mix-blend-difference opacity-0 group-hover:opacity-30 transition-opacity duration-300" />
 
                       <motion.div
-                        className="absolute bottom-4 left-4 right-16 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        className="absolute bottom-4 left-4 right-16 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"
                       >
                         <Link href={`/product/${product.id}`}>
-                          <Button className="w-full bg-white text-black hover:bg-black hover:text-white border-2 border-black py-3 font-bold tracking-wider transition-all duration-300">
+                          <Button className="w-full bg-white text-black hover:bg-black hover:text-white border-2 border-black py-4 font-bold tracking-wider transition-all duration-300 shadow-xl">
                             <ShoppingBag className="w-4 h-4 mr-2" />
                             VIEW DETAILS
                           </Button>
