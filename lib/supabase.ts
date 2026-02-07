@@ -18,6 +18,10 @@ export type Product = {
     image_url: string;
     is_active: boolean;
     created_at: string;
+    stockQuantity?: number;
+    product_details?: string;
+    rating?: number;
+    reviews_count?: number;
 };
 
 export type Enquiry = {

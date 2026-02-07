@@ -99,3 +99,116 @@ export async function deleteProduct(id: string) {
         throw error;
     }
 }
+
+/**
+ * Fetch all active new arrivals for the public side of the site.
+ */
+export async function getNewArrivals() {
+    const { data, error } = await supabase
+        .from('new_arrivals')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching public new arrivals:', error);
+        throw error;
+    }
+    return data as Product[];
+}
+
+/**
+ * Fetch all new arrivals for the admin dashboard.
+ */
+export async function getAllNewArrivals() {
+    const { data, error } = await supabase
+        .from('new_arrivals')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching all new arrivals:', error);
+        throw error;
+    }
+    return data as Product[];
+}
+
+/**
+ * Create a new arrival.
+ */
+export async function createNewArrival(arrival: Omit<Product, 'id' | 'created_at'>) {
+    const { data, error } = await supabase
+        .from('new_arrivals')
+        .insert([arrival])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error creating new arrival:', error);
+        throw error;
+    }
+    return data as Product;
+}
+
+/**
+ * Update an existing new arrival.
+ */
+export async function updateNewArrival(id: string, arrival: Partial<Omit<Product, 'id' | 'created_at'>>) {
+    const { data, error } = await supabase
+        .from('new_arrivals')
+        .update(arrival)
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) {
+        console.error(`Error updating new arrival ${id}:`, error);
+        throw error;
+    }
+    return data as Product;
+}
+
+/**
+ * Delete a new arrival.
+ */
+export async function deleteNewArrival(id: string) {
+    const { error } = await supabase
+        .from('new_arrivals')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        console.error(`Error deleting new arrival ${id}:`, error);
+        throw error;
+    }
+}
+
+/**
+ * Fetch a single product by ID from either products or new_arrivals table.
+ */
+export async function getAnyProductById(id: string) {
+    // Try products table first
+    const { data: product, error: productError } = await supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (!productError && product) {
+        return product as Product;
+    }
+
+    // If not found, try new_arrivals table
+    const { data: arrival, error: arrivalError } = await supabase
+        .from('new_arrivals')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (!arrivalError && arrival) {
+        return arrival as Product;
+    }
+
+    console.error(`Product with ID ${id} not found in any table.`);
+    throw new Error('Product not found');
+}

@@ -100,7 +100,11 @@ export default function AdminProductsMain({ brands, categories, shops, isVendor,
       description: product.description,
       price: product.price || 0,
       image_url: product.image_url,
-      is_active: product.is_active
+      is_active: product.is_active,
+      product_details: product.product_details || '',
+      stockQuantity: product.stockQuantity || 0,
+      rating: product.rating || 0,
+      reviews_count: product.reviews_count || 0
     });
     setSelectedProductId(product.id);
     setFormMode('edit');

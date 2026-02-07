@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Loader2 } from 'lucide-react';
 
-interface ProductFormData {
+interface ArrivalFormData {
     name: string;
     description: string;
     price: number;
@@ -29,18 +29,18 @@ interface ProductFormData {
     reviews_count?: number;
 }
 
-interface ProductFormDialogProps {
+interface ArrivalFormDialogProps {
     open: boolean;
     onClose: () => void;
-    onSubmit: (data: ProductFormData) => void;
+    onSubmit: (data: ArrivalFormData) => void;
     isLoading: boolean;
-    initialData?: ProductFormData | null;
+    initialData?: ArrivalFormData | null;
     mode: 'create' | 'edit';
     title?: string;
     description?: string;
 }
 
-export default function ProductFormDialog({
+export default function ArrivalFormDialog({
     open,
     onClose,
     onSubmit,
@@ -49,7 +49,7 @@ export default function ProductFormDialog({
     mode,
     title,
     description,
-}: ProductFormDialogProps) {
+}: ArrivalFormDialogProps) {
     const {
         register,
         handleSubmit,
@@ -57,7 +57,7 @@ export default function ProductFormDialog({
         setValue,
         watch,
         formState: { errors },
-    } = useForm<ProductFormData>({
+    } = useForm<ArrivalFormData>({
         defaultValues: {
             name: '',
             description: '',
@@ -91,7 +91,7 @@ export default function ProductFormDialog({
         }
     }, [initialData, reset, open]);
 
-    const handleFormSubmit = (data: ProductFormData) => {
+    const handleFormSubmit = (data: ArrivalFormData) => {
         onSubmit(data);
     };
 
@@ -100,12 +100,12 @@ export default function ProductFormDialog({
             <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
-                        {title || (mode === 'create' ? 'Add New Product' : 'Edit Product')}
+                        {title || (mode === 'create' ? 'Add New Arrival' : 'Edit Arrival')}
                     </DialogTitle>
                     <DialogDescription>
                         {description || (mode === 'create'
-                            ? 'Fill in the details to create a new product.'
-                            : 'Update the product information below.')}
+                            ? 'Fill in the details for the new drop.'
+                            : 'Update the arrival details below.')}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -114,11 +114,11 @@ export default function ProductFormDialog({
                         {/* Left Column: Basic Info */}
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Product Name *</Label>
+                                <Label htmlFor="name">Arrival Name *</Label>
                                 <Input
                                     id="name"
-                                    {...register('name', { required: 'Product name is required' })}
-                                    placeholder="Enter product name"
+                                    {...register('name', { required: 'Arrival name is required' })}
+                                    placeholder="Enter arrival name"
                                 />
                                 {errors.name && (
                                     <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -148,7 +148,7 @@ export default function ProductFormDialog({
                                 <Textarea
                                     id="description"
                                     {...register('description', { required: 'Description is required' })}
-                                    placeholder="Enter product description"
+                                    placeholder="Enter arrival description"
                                     rows={6}
                                 />
                                 {errors.description && (
@@ -172,7 +172,7 @@ export default function ProductFormDialog({
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="product_details">Product Details (one per line)</Label>
+                                <Label htmlFor="product_details">Specs (one per line)</Label>
                                 <Textarea
                                     id="product_details"
                                     {...register('product_details')}
@@ -237,7 +237,7 @@ export default function ProductFormDialog({
                             </Button>
                             <Button type="submit" disabled={isLoading} className="bg-black text-white hover:bg-white hover:text-black border-2 border-black font-bold">
                                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {mode === 'create' ? 'Create Product' : 'Update Product'}
+                                {mode === 'create' ? 'Create Arrival' : 'Update Detail'}
                             </Button>
                         </DialogFooter>
                     </div>

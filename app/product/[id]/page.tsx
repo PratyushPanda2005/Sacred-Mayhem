@@ -1,93 +1,95 @@
-"use client"
 
-import { useState } from "react"
+"use client"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Heart, ShoppingBag, ArrowLeft, Plus, Minus, Star, Truck, Shield, RotateCcw } from "lucide-react"
+import { Heart, ShoppingBag, ArrowLeft, Plus, Minus, Star, Truck, Shield, RotateCcw, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Navigation from "@/components/navigation"
 import Link from "next/link"
-
-// Enhanced product data with multiple images for product ID 1
-const productData = {
-  1: {
-    id: 1,
-    name: "CHAOS OVERSIZED TEE",
-    price: 180,
-    images: [
-      "/placeholder.svg?height=600&width=600&text=CHAOS+TEE+FRONT",
-      "/placeholder.svg?height=600&width=600&text=CHAOS+TEE+BACK",
-      "/placeholder.svg?height=600&width=600&text=CHAOS+TEE+DETAIL",
-    ],
-    category: "TOPS",
-    description:
-      "Embrace the beautiful chaos with our signature oversized tee. Crafted from premium cotton with a rebellious spirit, this piece embodies the Sacred Mayhem aesthetic. The oversized fit provides comfort while making a bold statement.",
-    longDescription:
-      "This isn't just a t-shirt—it's a manifesto. The Chaos Oversized Tee represents the intersection of luxury and rebellion, where premium materials meet street-inspired design. Each piece is carefully constructed to ensure both comfort and durability, making it perfect for those who refuse to compromise on quality or style.",
-    details: [
-      "100% Premium Cotton",
-      "Oversized Fit",
-      "Screen Printed Graphics",
-      "Pre-Shrunk",
-      "Machine Washable",
-      "Reinforced Seams",
-      "Sustainable Materials",
-    ],
-    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
-    colors: ["BLACK", "WHITE"],
-    isNew: true,
-    rating: 4.8,
-    reviews: 127,
-    stock: 15,
-    features: [
-      { icon: Truck, title: "Free Shipping", description: "On orders over $200" },
-      { icon: RotateCcw, title: "30-Day Returns", description: "Easy returns & exchanges" },
-      { icon: Shield, title: "Authenticity", description: "100% authentic guarantee" },
-    ],
-  },
-}
-
-// Fallback for other products
-const getProductData = (id: number) => {
-  if (productData[id as keyof typeof productData]) {
-    return productData[id as keyof typeof productData]
-  }
-
-  return {
-    id,
-    name: "SAMPLE PRODUCT",
-    price: 200,
-    images: ["/placeholder.svg?height=600&width=600&text=PRODUCT+IMAGE"],
-    category: "TOPS",
-    description: "Premium streetwear piece with luxury details.",
-    longDescription: "This premium piece represents the Sacred Mayhem aesthetic.",
-    details: ["Premium Materials", "Quality Construction", "Unique Design"],
-    sizes: ["S", "M", "L", "XL"],
-    colors: ["BLACK"],
-    rating: 4.5,
-    reviews: 50,
-    stock: 10,
-    features: [
-      { icon: Truck, title: "Free Shipping", description: "On orders over $200" },
-      { icon: RotateCcw, title: "30-Day Returns", description: "Easy returns & exchanges" },
-      { icon: Shield, title: "Authenticity", description: "100% authentic guarantee" },
-    ],
-  }
-}
+import { getAnyProductById } from "@/lib/products"
 
 export default function ProductPage({ params }: { params: { id: string } }) {
-  const product = getProductData(Number.parseInt(params.id))
+  const [product, setProduct] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedSize, setSelectedSize] = useState("")
-  const [selectedColor, setSelectedColor] = useState(product.colors[0])
+  const [selectedColor, setSelectedColor] = useState("")
   const [quantity, setQuantity] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [activeTab, setActiveTab] = useState("description")
+
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const data = await getAnyProductById(params.id)
+        // Map database fields to UI fields
+        const mappedProduct = {
+          ...data,
+          images: data.image_url ? [data.image_url] : ["/placeholder.svg?height=600&width=600&text=PRODUCT+IMAGE"],
+          category: "EXCLUSIVE",
+          longDescription: data.description,
+          details: data.product_details
+            ? data.product_details.split('\n').filter((line: string) => line.trim() !== '')
+            : ["Premium Materials", "Quality Construction", "Unique Design"],
+          sizes: ["S", "M", "L", "XL"],
+          colors: ["BLACK"],
+          rating: data.rating || 4.5,
+          reviews: data.reviews_count || 50,
+          stock: data.stockQuantity || 10,
+          isNew: new Date(data.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          features: [
+            { icon: Truck, title: "Free Shipping", description: "On orders over $200" },
+            { icon: RotateCcw, title: "30-Day Returns", description: "Easy returns & exchanges" },
+            { icon: Shield, title: "Authenticity", description: "100% authentic guarantee" },
+          ],
+        }
+        setProduct(mappedProduct)
+        if (mappedProduct.colors && mappedProduct.colors.length > 0) {
+          setSelectedColor(mappedProduct.colors[0])
+        }
+      } catch (err) {
+        console.error("Error fetching product:", err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchProduct()
+  }, [params.id])
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "fill-current text-black" : "text-gray-300"}`} />
     ))
+  }
+
+  if (isLoading) {
+    return (
+      <div className="bg-white min-h-screen">
+        <Navigation />
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)]">
+          <Loader2 className="w-12 h-12 animate-spin mb-4" />
+          <p className="text-xl font-bold tracking-widest">LOADING PRODUCT...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="bg-white min-h-screen">
+        <Navigation />
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)]">
+          <h1 className="text-4xl font-black mb-4">PRODUCT NOT FOUND</h1>
+          <Link href="/shop">
+            <Button className="bg-black text-white hover:bg-white hover:text-black border-2 border-black px-8 py-3 font-bold tracking-wider">
+              BACK TO SHOP
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -131,13 +133,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 {/* Image Navigation Dots */}
                 {product.images.length > 1 && (
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                    {product.images.map((_, index) => (
+                    {product.images.map((_: string, index: number) => (
                       <button
                         key={index}
                         onClick={() => setSelectedImage(index)}
-                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                          selectedImage === index ? "bg-white" : "bg-white/50"
-                        }`}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${selectedImage === index ? "bg-white" : "bg-white/50"
+                          }`}
                       />
                     ))}
                   </div>
@@ -147,13 +148,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               {/* Thumbnail Images */}
               {product.images.length > 1 && (
                 <div className="grid grid-cols-3 gap-4">
-                  {product.images.map((image, index) => (
+                  {product.images.map((image: string, index: number) => (
                     <motion.button
                       key={index}
                       onClick={() => setSelectedImage(index)}
-                      className={`aspect-square bg-black overflow-hidden border-2 transition-all duration-300 ${
-                        selectedImage === index ? "border-black" : "border-transparent"
-                      }`}
+                      className={`aspect-square bg-black overflow-hidden border-2 transition-all duration-300 ${selectedImage === index ? "border-black" : "border-transparent"
+                        }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -209,15 +209,14 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               >
                 <h3 className="text-xl font-bold tracking-wider mb-4">COLOR</h3>
                 <div className="flex space-x-3 mb-6">
-                  {product.colors.map((color) => (
+                  {product.colors.map((color: string) => (
                     <motion.button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`px-6 py-3 border-2 font-bold tracking-wider transition-all duration-300 ${
-                        selectedColor === color
-                          ? "bg-black text-white border-black"
-                          : "bg-white text-black border-black hover:bg-black hover:text-white"
-                      }`}
+                      className={`px-6 py-3 border-2 font-bold tracking-wider transition-all duration-300 ${selectedColor === color
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border-black hover:bg-black hover:text-white"
+                        }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -235,15 +234,14 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               >
                 <h3 className="text-xl font-bold tracking-wider mb-4">SIZE</h3>
                 <div className="grid grid-cols-6 gap-2 mb-6">
-                  {product.sizes.map((size) => (
+                  {product.sizes.map((size: string) => (
                     <motion.button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`py-3 px-4 border-2 font-bold tracking-wider transition-all duration-300 ${
-                        selectedSize === size
-                          ? "bg-black text-white border-black"
-                          : "bg-white text-black border-black hover:bg-black hover:text-white"
-                      }`}
+                      className={`py-3 px-4 border-2 font-bold tracking-wider transition-all duration-300 ${selectedSize === size
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border-black hover:bg-black hover:text-white"
+                        }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -297,11 +295,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
                 <Button
                   onClick={() => setIsWishlisted(!isWishlisted)}
-                  className={`w-full border-2 border-black py-4 text-lg font-bold tracking-wider transition-all duration-300 ${
-                    isWishlisted
-                      ? "bg-black text-white hover:bg-white hover:text-black"
-                      : "bg-white text-black hover:bg-black hover:text-white"
-                  }`}
+                  className={`w-full border-2 border-black py-4 text-lg font-bold tracking-wider transition-all duration-300 ${isWishlisted
+                    ? "bg-black text-white hover:bg-white hover:text-black"
+                    : "bg-white text-black hover:bg-black hover:text-white"
+                    }`}
                 >
                   <Heart className={`w-5 h-5 mr-2 ${isWishlisted ? "fill-current" : ""}`} />
                   {isWishlisted ? "REMOVE FROM WISHLIST" : "ADD TO WISHLIST"}
@@ -315,7 +312,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.7 }}
               >
-                {product.features.map((feature, index) => (
+                {product.features.map((feature: any, index: number) => (
                   <div key={index} className="flex items-center space-x-3 p-4 border border-black">
                     <feature.icon className="w-6 h-6" />
                     <div>
@@ -341,9 +338,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`pb-4 font-bold tracking-wider uppercase transition-all duration-300 ${
-                      activeTab === tab ? "border-b-2 border-black text-black" : "text-gray-500 hover:text-black"
-                    }`}
+                    className={`pb-4 font-bold tracking-wider uppercase transition-all duration-300 ${activeTab === tab ? "border-b-2 border-black text-black" : "text-gray-500 hover:text-black"
+                      }`}
                   >
                     {tab}
                   </button>
@@ -369,7 +365,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                   <div>
                     <h3 className="text-xl font-bold tracking-wider mb-6">PRODUCT DETAILS</h3>
                     <ul className="space-y-3">
-                      {product.details.map((detail, index) => (
+                      {product.details.map((detail: string, index: number) => (
                         <li key={index} className="flex items-center space-x-3">
                           <span className="w-2 h-2 bg-black"></span>
                           <span>{detail}</span>

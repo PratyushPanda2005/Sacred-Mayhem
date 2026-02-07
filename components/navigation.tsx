@@ -14,8 +14,6 @@ interface NavigationProps {
 const navItems = [
   { name: "SHOP", href: "/shop" },
   { name: "NEW ARRIVALS", href: "/new-arrivals" },
-  { name: "COLLECTIONS", href: "/collections" },
-  { name: "ARCHIVES", href: "/sale" },
   { name: "LOOKBOOK", href: "/lookbook" },
   { name: "ABOUT", href: "/about" },
   { name: "CONTACT", href: "/contact" },
