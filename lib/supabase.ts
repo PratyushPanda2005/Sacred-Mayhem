@@ -32,3 +32,15 @@ export type Enquiry = {
     message: string;
     created_at: string;
 };
+
+export type Collection = {
+    id: number;
+    title: string;
+    season: string;
+    piece_count: number;
+    image_url: string;
+    is_featured: boolean;
+    description: string;
+    gallery?: string[]; // Array of image URLs
+    created_at: string;
+};

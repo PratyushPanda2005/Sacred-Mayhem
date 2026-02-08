@@ -6,46 +6,27 @@ import { Button } from "@/components/ui/button"
 import Navigation from "@/components/navigation"
 import Link from "next/link"
 
-const collections = [
-  {
-    id: 1,
-    title: "CHAOS THEORY",
-    subtitle: "SPRING/SUMMER 2024",
-    description: "Embrace the beautiful disorder of modern streetwear. Where structure meets rebellion.",
-    image: "/placeholder.svg?height=600&width=800",
-    products: 12,
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "VOID WALKER",
-    subtitle: "FALL/WINTER 2023",
-    description: "Navigate the space between luxury and street. Premium materials meet urban aesthetics.",
-    image: "/placeholder.svg?height=600&width=800",
-    products: 18,
-    featured: false,
-  },
-  {
-    id: 3,
-    title: "SACRED GEOMETRY",
-    subtitle: "CAPSULE COLLECTION",
-    description: "Architectural lines and sacred proportions define this limited edition series.",
-    image: "/placeholder.svg?height=600&width=800",
-    products: 8,
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "BINARY CODE",
-    subtitle: "TECH WEAR SERIES",
-    description: "Digital age meets analog craftsmanship in our most technical collection yet.",
-    image: "/placeholder.svg?height=600&width=800",
-    products: 15,
-    featured: false,
-  },
-]
+import { getCollections } from "@/lib/collections"
+import { useQuery } from "@tanstack/react-query"
+import { Loader2 } from "lucide-react"
 
 export default function LookbookPage() {
+  const { data: collections, isLoading } = useQuery({
+    queryKey: ["collections"],
+    queryFn: getCollections,
+  })
+
+  if (isLoading) {
+    return (
+      <div className="bg-white text-black min-h-screen">
+        <Navigation />
+        <div className="flex items-center justify-center min-h-[calc(100vh-64px)] pt-16">
+          <Loader2 className="w-8 h-8 animate-spin text-black" />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white text-black min-h-screen">
       <Navigation />
@@ -73,7 +54,7 @@ export default function LookbookPage() {
           </motion.div>
 
           <div className="space-y-20">
-            {collections.map((collection, index) => (
+            {collections?.map((collection, index) => (
               <motion.div
                 key={collection.id}
                 className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? "lg:grid-flow-col-dense" : ""
@@ -89,12 +70,12 @@ export default function LookbookPage() {
                     transition={{ duration: 0.3 }}
                   >
                     <img
-                      src={collection.image || "/placeholder.svg"}
+                      src={collection.image_url || "/placeholder.svg"}
                       alt={collection.title}
                       className="w-full h-96 lg:h-[500px] object-cover filter grayscale group-hover:scale-110 transition-transform duration-500"
                     />
                     <motion.div className="absolute inset-0 bg-white mix-blend-difference opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
-                    {collection.featured && (
+                    {collection.is_featured && (
                       <div className="absolute top-6 left-6">
                         <span className="bg-white text-black px-4 py-2 font-bold tracking-wider">FEATURED</span>
                       </div>
@@ -104,20 +85,24 @@ export default function LookbookPage() {
 
                 <div className={`space-y-6 ${index % 2 === 1 ? "lg:col-start-1 lg:row-start-1" : ""}`}>
                   <div>
-                    <h3 className="text-sm font-bold tracking-widest mb-2 text-gray-600">{collection.subtitle}</h3>
+                    <h3 className="text-sm font-bold tracking-widest mb-2 text-gray-600">{collection.season}</h3>
                     <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4">{collection.title}</h2>
                     <p className="text-lg leading-relaxed mb-6">{collection.description}</p>
-                    <p className="text-sm font-bold tracking-wider mb-8">{collection.products} PIECES</p>
+                    <p className="text-sm font-bold tracking-wider mb-8">{collection.piece_count} PIECES</p>
                   </div>
 
                   <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                    <Link href="/shop">
+                    <Link href={`/lookbook/${collection.id}`} className="flex-1">
                       <Button className="bg-black text-white hover:bg-white hover:text-black border-2 border-black px-8 py-4 text-lg font-bold tracking-wider transition-all duration-300 w-full sm:w-auto">
-                        SHOP COLLECTION
+                        VIEW LOOKBOOK
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
                     </Link>
-                    {/* Removed the link to /lookbook since we are on the lookbook page */}
+                    <Link href="/shop" className="flex-1">
+                      <Button variant="outline" className="bg-transparent text-black hover:bg-black hover:text-white border-2 border-black px-8 py-4 text-lg font-bold tracking-wider transition-all duration-300 w-full sm:w-auto">
+                        SHOP PIECES
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </motion.div>

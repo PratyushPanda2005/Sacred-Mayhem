@@ -7,116 +7,29 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollReveal } from "@/components/scroll-reveal"
 
-const lookbookCollections = [
-  {
-    id: "1",
-    title: "URBAN MINIMALISM",
-    subtitle: "Fall/Winter 2024",
-    description:
-      "Where concrete meets couture. A study in architectural fashion, blending harsh urban landscapes with refined, minimalist silhouettes. This collection explores the beauty in stark contrasts and the power of understated elegance.",
-    images: [
-      "/placeholder.svg?height=1080&width=1920&text=Urban+Minimalism+1",
-      "/placeholder.svg?height=1080&width=1920&text=Urban+Minimalism+2",
-      "/placeholder.svg?height=1080&width=1920&text=Urban+Minimalism+3",
-    ],
-    relatedProducts: [
-      { id: 1, name: "ESSENTIAL TEE", price: 85, image: "/placeholder.svg?height=400&width=300&text=Tee" },
-      { id: 3, name: "CARGO PANTS", price: 195, image: "/placeholder.svg?height=400&width=300&text=Cargo" },
-    ],
-  },
-  {
-    id: "2",
-    title: "STREET ELEGANCE",
-    subtitle: "Capsule Collection",
-    description:
-      "Refined rebellion. Luxury meets the underground. This capsule collection redefines street style with elevated fabrics and sophisticated cuts, proving that comfort and high fashion can coexist.",
-    images: [
-      "/placeholder.svg?height=1080&width=1920&text=Street+Elegance+1",
-      "/placeholder.svg?height=1080&width=1920&text=Street+Elegance+2",
-    ],
-    relatedProducts: [
-      { id: 2, name: "OVERSIZED HOODIE", price: 165, image: "/placeholder.svg?height=400&width=300&text=Hoodie" },
-      { id: 6, name: "MINIMAL SNEAKERS", price: 245, image: "/placeholder.svg?height=400&width=300&text=Sneakers" },
-    ],
-  },
-  {
-    id: "3",
-    title: "MONOCHROME DREAMS",
-    subtitle: "Editorial Series",
-    description:
-      "Black and white. Nothing more, nothing less. An editorial series that celebrates the timeless power of monochrome, showcasing how depth and emotion can be conveyed through the absence of color.",
-    images: [
-      "/placeholder.svg?height=1080&width=1920&text=Monochrome+Dreams+1",
-      "/placeholder.svg?height=1080&width=1920&text=Monochrome+Dreams+2",
-      "/placeholder.svg?height=1080&width=1920&text=Monochrome+Dreams+3",
-      "/placeholder.svg?height=1080&width=1920&text=Monochrome+Dreams+4",
-    ],
-    relatedProducts: [
-      { id: 1, name: "ESSENTIAL TEE", price: 85, image: "/placeholder.svg?height=400&width=300&text=Tee" },
-      { id: 4, name: "BOMBER JACKET", price: 285, image: "/placeholder.svg?height=400&width=300&text=Bomber" },
-    ],
-  },
-  {
-    id: "4",
-    title: "UNDERGROUND CULTURE",
-    subtitle: "Collaboration",
-    description:
-      "Born from the streets, elevated to art. A unique collaboration that fuses raw street energy with high-end design, creating pieces that are both authentic and luxurious.",
-    images: [
-      "/placeholder.svg?height=1080&width=1920&text=Underground+Culture+1",
-      "/placeholder.svg?height=1080&width=1920&text=Underground+Culture+2",
-    ],
-    relatedProducts: [
-      { id: 5, name: "TRACK SUIT", price: 325, image: "/placeholder.svg?height=400&width=300&text=Track+Suit" },
-      { id: 8, name: "WIDE LEG JEANS", price: 145, image: "/placeholder.svg?height=400&width=300&text=Jeans" },
-    ],
-  },
-  {
-    id: "5",
-    title: "MIDNIGHT SESSIONS",
-    subtitle: "Behind the Scenes",
-    description:
-      "The creative process unveiled. A rare glimpse into the late-night sessions and meticulous craftsmanship that go into every BLVCK collection, revealing the passion behind the brand.",
-    images: [
-      "/placeholder.svg?height=1080&width=1920&text=Midnight+Sessions+1",
-      "/placeholder.svg?height=1080&width=1920&text=Midnight+Sessions+2",
-    ],
-    relatedProducts: [
-      { id: 7, name: "LEATHER JACKET", price: 485, image: "/placeholder.svg?height=400&width=300&text=Leather" },
-    ],
-  },
-  {
-    id: "6",
-    title: "FUTURE NOIR",
-    subtitle: "Spring/Summer 2025",
-    description:
-      "Tomorrow's darkness, today's vision. This collection anticipates future trends, blending dystopian aesthetics with sleek, functional designs for the modern urban explorer.",
-    images: [
-      "/placeholder.svg?height=1080&width=1920&text=Future+Noir+1",
-      "/placeholder.svg?height=1080&width=1920&text=Future+Noir+2",
-      "/placeholder.svg?height=1080&width=1920&text=Future+Noir+3",
-    ],
-    relatedProducts: [
-      { id: 2, name: "OVERSIZED HOODIE", price: 165, image: "/placeholder.svg?height=400&width=300&text=Hoodie" },
-      { id: 5, name: "TRACK SUIT", price: 325, image: "/placeholder.svg?height=400&width=300&text=Track+Suit" },
-    ],
-  },
-]
+import { getCollectionById } from "@/lib/collections"
+import { useQuery } from "@tanstack/react-query"
+import { Loader2 } from "lucide-react"
 
 interface LookbookDetailProps {
   collectionId: string
 }
 
 export function LookbookDetail({ collectionId }: LookbookDetailProps) {
-  const collection = lookbookCollections.find((col) => col.id === collectionId)
+  const { data: collection, isLoading } = useQuery({
+    queryKey: ["collection", collectionId],
+    queryFn: () => getCollectionById(collectionId),
+  })
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  useEffect(() => {
-    if (!collection) {
-      // Handle case where collection is not found, e.g., redirect to 404 or lookbook page
-      console.error("Collection not found")
-    }
-  }, [collection])
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-black" />
+      </div>
+    )
+  }
 
   if (!collection) {
     return (
@@ -126,25 +39,30 @@ export function LookbookDetail({ collectionId }: LookbookDetailProps) {
     )
   }
 
+  // Use gallery from DB or generate placeholders for demonstration if empty
+  const galleryImages = (collection.gallery && collection.gallery.length > 0)
+    ? collection.gallery
+    : Array.from({ length: 25 }).map((_, i) => `/placeholder.svg?height=1080&width=1920&text=${collection.title}+Gallery+${i + 1}`)
+
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % collection.images.length)
+    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length)
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + collection.images.length) % collection.images.length)
+    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)
   }
 
   return (
     <div className="min-h-screen pt-16 lg:pt-20 mx-4 lg:mx-8 xl:mx-12">
       {/* Hero Section */}
-      <section className="relative h-[60vh] bg-black text-white overflow-hidden rounded-lg">
+      <section className="relative h-[70vh] bg-black text-white overflow-hidden rounded-lg">
         <Image
-          src={collection.images[currentImageIndex] || "/placeholder.svg"}
+          src={galleryImages[currentImageIndex] || collection.image_url || "/placeholder.svg"}
           alt={collection.title}
           fill
           className="object-cover transition-opacity duration-700"
         />
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/40" />
 
         <div className="relative z-10 flex h-full items-center justify-center">
           <div className="container mx-auto px-4 text-center">
@@ -154,19 +72,19 @@ export function LookbookDetail({ collectionId }: LookbookDetailProps) {
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={400}>
-              <p className="text-lg uppercase tracking-wide md:text-xl lg:text-2xl">{collection.subtitle}</p>
+              <p className="text-lg uppercase tracking-wide md:text-xl lg:text-2xl">{collection.season}</p>
             </ScrollReveal>
           </div>
         </div>
 
         {/* Image Navigation */}
-        {collection.images.length > 1 && (
+        {galleryImages.length > 1 && (
           <>
             <Button
               variant="ghost"
               size="icon"
               onClick={prevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 text-black hover:bg-white hover:scale-110 transition-all duration-300 z-20"
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 z-20 backdrop-blur-md"
             >
               <ChevronLeft className="h-6 w-6" />
             </Button>
@@ -174,89 +92,74 @@ export function LookbookDetail({ collectionId }: LookbookDetailProps) {
               variant="ghost"
               size="icon"
               onClick={nextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 text-black hover:bg-white hover:scale-110 transition-all duration-300 z-20"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 text-white hover:bg-white hover:text-black transition-all duration-300 z-20 backdrop-blur-md"
             >
               <ChevronRight className="h-6 w-6" />
             </Button>
-            <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 space-x-2">
-              {collection.images.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`h-2 w-8 transition-all duration-300 ${
-                    index === currentImageIndex ? "bg-white" : "bg-white/50 hover:bg-white/75"
-                  }`}
-                />
-              ))}
-            </div>
           </>
         )}
       </section>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-12">
         {/* Collection Description */}
         <ScrollReveal direction="up">
-          <div className="mb-8 max-w-3xl mx-auto text-center">
-            <p className="text-lg leading-relaxed text-gray-700">{collection.description}</p>
+          <div className="mb-16 max-w-4xl mx-auto text-center">
+            <h2 className="text-sm font-bold tracking-[0.3em] text-gray-400 mb-6 uppercase">The Story</h2>
+            <p className="text-2xl font-light leading-relaxed text-gray-800 italic">{collection.description}</p>
           </div>
         </ScrollReveal>
 
-        {/* Image Gallery */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {collection.images.map((img, index) => (
-            <ScrollReveal key={index} direction="up" delay={index * 100}>
-              <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
+        {/* Masonry-style Grid Gallery */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {galleryImages.map((img, index) => (
+            <ScrollReveal key={index} direction="up" delay={(index % 3) * 100}>
+              <div className={`relative overflow-hidden rounded-lg bg-gray-100 group cursor-pointer ${index % 5 === 0 ? "md:col-span-2 aspect-video" : "aspect-[3/4]"
+                }`}>
                 <Image
                   src={img || "/placeholder.svg"}
-                  alt={`${collection.title} image ${index + 1}`}
+                  alt={`${collection.title} gallery image ${index + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
             </ScrollReveal>
           ))}
         </div>
 
-        {/* Related Products */}
-        {collection.relatedProducts && collection.relatedProducts.length > 0 && (
-          <section className="mt-12">
-            <ScrollReveal direction="up">
-              <h2 className="mb-6 text-center text-3xl font-black uppercase tracking-wider">Shop the Collection</h2>
-            </ScrollReveal>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {collection.relatedProducts.map((product, index) => (
-                <ScrollReveal key={product.id} direction="up" delay={index * 100}>
-                  <Link href={`/product/${product.id}`} className="group block">
-                    <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-4 rounded-lg">
-                      <Image
-                        src={product.image || "/placeholder.svg"}
-                        alt={product.name}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <h3 className="mb-1 text-lg font-bold uppercase tracking-wide group-hover:text-gray-600 transition-colors">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-600">${product.price}</p>
-                  </Link>
-                </ScrollReveal>
-              ))}
+        {/* Related Products Placeholder / Section */}
+        <section className="mt-24">
+          <ScrollReveal direction="up">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-black uppercase tracking-wider mb-2">Shop the Collection</h2>
+              <div className="w-20 h-1 bg-black mx-auto" />
             </div>
-          </section>
-        )}
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="text-center p-8 border-2 border-dashed border-gray-200 rounded-lg">
+              <p className="text-gray-400 font-bold tracking-widest uppercase">Coming Soon</p>
+            </div>
+            <div className="text-center p-8 border-2 border-dashed border-gray-200 rounded-lg">
+              <p className="text-gray-400 font-bold tracking-widest uppercase">Coming Soon</p>
+            </div>
+            <div className="text-center p-8 border-2 border-dashed border-gray-200 rounded-lg">
+              <p className="text-gray-400 font-bold tracking-widest uppercase">Coming Soon</p>
+            </div>
+          </div>
+        </section>
 
         {/* Call to Action */}
         <ScrollReveal direction="up" delay={400}>
-          <div className="mt-12 text-center">
-            <h2 className="mb-6 text-3xl font-black uppercase tracking-wider md:text-4xl">Explore More Lookbooks</h2>
+          <div className="mt-24 text-center py-20 bg-gray-50 rounded-2xl">
+            <h2 className="mb-8 text-4xl font-black uppercase tracking-tighter md:text-5xl">Explore Other Worlds</h2>
             <Button
               asChild
               variant="outline"
               size="lg"
-              className="border-black px-8 py-4 text-lg font-bold uppercase tracking-wide text-black hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 bg-transparent"
+              className="border-2 border-black px-12 py-8 text-xl font-black uppercase tracking-widest text-black hover:bg-black hover:text-white transition-all duration-500 bg-transparent rounded-none"
             >
-              <Link href="/lookbook">View All Collections</Link>
+              <Link href="/lookbook">Back to Collections</Link>
             </Button>
           </div>
         </ScrollReveal>

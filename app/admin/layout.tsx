@@ -89,6 +89,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Link href="/admin/new-arrivals" className="block p-2 hover:bg-gray-200 rounded">
                         New Arrivals
                     </Link>
+                    <Link href="/admin/collections" className="block p-2 hover:bg-gray-200 rounded">
+                        Collections
+                    </Link>
                     <Link href="/admin/orders" className="block p-2 hover:bg-gray-200 rounded">
                         Orders
                     </Link>
