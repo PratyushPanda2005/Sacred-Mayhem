@@ -167,22 +167,17 @@ export default function AboutPage() {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-8">THE SACRED MAYHEM STORY</h2>
               <div className="space-y-8 text-lg leading-relaxed">
                 <p>
-                  Born from the streets and elevated to luxury, Sacred Mayhem represents the intersection of rebellion
-                  and refinement. We believe that true style comes from authentic self-expression, not conformity to
-                  trends.
+                  Sacred Mayhem is the collision of chaos and reverence, a brand born where ritual meets rebellion. We are the visual language of the untamed, the whispered prayers of the misunderstood, and the bold voice of those who don’t ask for permission to exist.
                 </p>
                 <p>
-                  Our journey began in 2019 with a simple mission: to create premium streetwear that speaks to the
-                  rebels, the dreamers, and the ones who dare to be different. Every piece in our collection is
-                  meticulously crafted to embody the spirit of controlled chaos—where precision meets rebellion.
+                  At our core, we seek to be the rebirth of the abstract and surrealist art style, not just in form, but in thought. We revive its fractured logic, its dreamlike dissonance, and its refusal to make sense on anyone else’s terms. Our work is a rebellion against the ordinary, a revival of the subconscious as muse.
+                  Every design is an invocation.
                 </p>
                 <p>
-                  From our signature oversized silhouettes to our bold graphic statements, Sacred Mayhem isn't just
-                  clothing—it's armor for the modern rebel. We source only the finest materials and work with skilled
-                  artisans who share our commitment to excellence.
+                  We blend sacred symbols, surreal visuals, and fragmented narratives to create wearable paradoxes, challenging norms, confronting silence, and honoring the beauty in disorder.
+                  We’re not here to dress the masses. We’re here for the seekers, the skeptics, the prophets in streetwear, those who find meaning in the madness.
                 </p>
               </div>
             </motion.div>
@@ -199,27 +194,12 @@ export default function AboutPage() {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-4">BY THE NUMBERS</h2>
-              <p className="text-xl tracking-widest">OUR IMPACT WORLDWIDE</p>
+              <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-4">BRAND ETHOS</h2>
             </motion.div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  className="text-center"
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="text-4xl md:text-6xl font-black mb-4">
-                    {animatedStats[index].toLocaleString()}
-                    {stat.suffix}
-                  </div>
-                  <div className="text-sm tracking-widest">{stat.label}</div>
-                </motion.div>
-              ))}
+            <div className="text-center uppercase">
+              <h1>This is Sacred Mayhem.</h1>
+              <p>Where the chaos meets divinity.</p>
             </div>
           </div>
         </section>

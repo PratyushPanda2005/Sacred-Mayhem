@@ -21,19 +21,19 @@ import Link from "next/link"
 // ]
 
 import { useQuery } from "@tanstack/react-query"
-import { getProducts } from "@/lib/products"
+import { getFeaturedCollection } from "@/lib/products"
 
 export default function HomePage() {
   const [cartItems, setCartItems] = useState<any[]>([])
   const [wishlistItems, setWishlistItems] = useState<any[]>([])
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null) // Changed from number to string for ID
 
-  const { data: products } = useQuery({
-    queryKey: ['home-products'],
-    queryFn: getProducts
+  const { data: featuredData } = useQuery({
+    queryKey: ['home-featured-collection'],
+    queryFn: getFeaturedCollection
   });
 
-  const featuredProducts = products?.slice(0, 8).map(p => ({
+  const featuredProducts = featuredData?.map(p => ({
     id: p.id,
     name: p.name,
     price: p.price || 0,

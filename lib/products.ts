@@ -212,3 +212,86 @@ export async function getAnyProductById(id: string) {
     console.error(`Product with ID ${id} not found in any table.`);
     throw new Error('Product not found');
 }
+
+/**
+ * Fetch all active featured collection items for the public side of the site.
+ */
+export async function getFeaturedCollection() {
+    const { data, error } = await supabase
+        .from('featured_collection')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching public featured collection:', error);
+        throw error;
+    }
+    return data as Product[];
+}
+
+/**
+ * Fetch all featured collection items for the admin dashboard.
+ */
+export async function getAllFeaturedCollection() {
+    const { data, error } = await supabase
+        .from('featured_collection')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching all featured collection:', error);
+        throw error;
+    }
+    return data as Product[];
+}
+
+/**
+ * Create a new featured collection item.
+ */
+export async function createFeaturedItem(item: Omit<Product, 'id' | 'created_at'>) {
+    const { data, error } = await supabase
+        .from('featured_collection')
+        .insert([item])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error creating featured item:', error);
+        throw error;
+    }
+    return data as Product;
+}
+
+/**
+ * Update an existing featured collection item.
+ */
+export async function updateFeaturedItem(id: string, item: Partial<Omit<Product, 'id' | 'created_at'>>) {
+    const { data, error } = await supabase
+        .from('featured_collection')
+        .update(item)
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) {
+        console.error(`Error updating featured item ${id}:`, error);
+        throw error;
+    }
+    return data as Product;
+}
+
+/**
+ * Delete a featured collection item.
+ */
+export async function deleteFeaturedItem(id: string) {
+    const { error } = await supabase
+        .from('featured_collection')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        console.error(`Error deleting featured item ${id}:`, error);
+        throw error;
+    }
+}
