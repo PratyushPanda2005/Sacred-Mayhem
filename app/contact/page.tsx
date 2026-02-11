@@ -43,7 +43,7 @@ export default function ContactPage() {
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-bold tracking-wider">BACK TO SHOP</span>
-            </motion.div> 
+            </motion.div>
           </Link>
 
           <motion.div
@@ -163,18 +163,6 @@ export default function ContactPage() {
                     <p className="text-sm">Mon-Fri 9AM-6PM EST</p>
                   </div>
                 </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-black text-white">
-                    <MapPin className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold tracking-wider mb-2">ADDRESS</h3>
-                    <p className="text-lg">123 Rebellion Street</p>
-                    <p className="text-lg">New York, NY 10001</p>
-                    <p className="text-lg">United States</p>
-                  </div>
-                </div>
               </div>
 
               <motion.div
@@ -226,10 +214,7 @@ export default function ContactPage() {
                     details.
                   </p>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold tracking-wider mb-2">Do you ship internationally?</h3>
-                  <p>Yes, we ship worldwide. International shipping rates and delivery times vary by location.</p>
-                </div>
+
               </div>
               <div className="space-y-6">
                 <div>
@@ -240,18 +225,10 @@ export default function ContactPage() {
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold tracking-wider mb-2">When will new drops be available?</h3>
-                  <p>
-                    New collections drop monthly. Subscribe to our newsletter to be the first to know about new
-                    releases.
-                  </p>
+                  <h3 className="text-xl font-bold tracking-wider mb-2">Do you ship internationally?</h3>
+                  <p>Yes, we ship worldwide. International shipping rates and delivery times vary by location.</p>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold tracking-wider mb-2">Do you offer wholesale?</h3>
-                  <p>
-                    Yes, we work with select retailers. Contact us at wholesale@sacredmayhem.com for more information.
-                  </p>
-                </div>
+
               </div>
             </div>
           </motion.div>

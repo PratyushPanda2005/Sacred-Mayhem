@@ -77,23 +77,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Link href="/admin" className="block p-2 hover:bg-gray-200 rounded">
                         Dashboard
                     </Link>
-                    <Link href="/admin/brands" className="block p-2 hover:bg-gray-200 rounded">
-                        Brands
-                    </Link>
                     <Link href="/admin/categories" className="block p-2 hover:bg-gray-200 rounded">
                         Categories
                     </Link>
                     <Link href="/admin/products" className="block p-2 hover:bg-gray-200 rounded">
-                        Products
-                    </Link>
-                    <Link href="/admin/new-arrivals" className="block p-2 hover:bg-gray-200 rounded">
-                        New Arrivals
+                        Shop
                     </Link>
                     <Link href="/admin/featured-collection" className="block p-2 hover:bg-gray-200 rounded">
-                        Featured Collection
+                        Spotlight
                     </Link>
                     <Link href="/admin/collections" className="block p-2 hover:bg-gray-200 rounded">
-                        Collections
+                        Lookbook
                     </Link>
                     <Link href="/admin/orders" className="block p-2 hover:bg-gray-200 rounded">
                         Orders

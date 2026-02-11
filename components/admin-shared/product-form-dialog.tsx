@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
     Dialog,
@@ -15,7 +15,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Upload, X } from 'lucide-react';
+import { uploadImage } from '@/lib/storage';
+import { toast } from 'sonner';
 
 interface ProductFormData {
     name: string;
@@ -50,6 +52,7 @@ export default function ProductFormDialog({
     title,
     description,
 }: ProductFormDialogProps) {
+    const [isUploading, setIsUploading] = useState(false);
     const {
         register,
         handleSubmit,
@@ -72,6 +75,7 @@ export default function ProductFormDialog({
     });
 
     const isActive = watch('is_active');
+    const imageUrl = watch('image_url');
 
     useEffect(() => {
         if (initialData) {
@@ -91,7 +95,28 @@ export default function ProductFormDialog({
         }
     }, [initialData, reset, open]);
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setIsUploading(true);
+            const url = await uploadImage(file, 'product-images'); // Using product-images bucket as it exists
+            setValue('image_url', url);
+            toast.success('Image uploaded successfully');
+        } catch (error: any) {
+            console.error('Upload failed:', error);
+            toast.error('Failed to upload image: ' + error.message);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     const handleFormSubmit = (data: ProductFormData) => {
+        if (!data.image_url) {
+            toast.error('Please upload an image');
+            return;
+        }
         onSubmit(data);
     };
 
@@ -160,12 +185,49 @@ export default function ProductFormDialog({
                         {/* Right Column: Media & Specs */}
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="image_url">Image URL *</Label>
-                                <Input
-                                    id="image_url"
-                                    {...register('image_url', { required: 'Image URL is required' })}
-                                    placeholder="https://example.com/image.jpg"
-                                />
+                                <Label>Product Image *</Label>
+                                <div className="mt-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    {imageUrl ? (
+                                        <div className="relative w-full aspect-square max-h-[200px]">
+                                            <img
+                                                src={imageUrl}
+                                                alt="Product Preview"
+                                                className="w-full h-full object-contain rounded-md"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setValue('image_url', '')}
+                                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow-md"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <label className="flex flex-col items-center justify-center w-full h-32 cursor-pointer">
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                {isUploading ? (
+                                                    <Loader2 className="w-10 h-10 text-gray-400 animate-spin" />
+                                                ) : (
+                                                    <>
+                                                        <Upload className="w-10 h-10 text-gray-400 mb-2" />
+                                                        <p className="text-sm text-gray-500">
+                                                            <span className="font-semibold">Click to upload</span> or drag and drop
+                                                        </p>
+                                                        <p className="text-xs text-gray-400">PNG, JPG or WebP</p>
+                                                    </>
+                                                )}
+                                            </div>
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept="image/*"
+                                                onChange={handleImageUpload}
+                                                disabled={isUploading}
+                                            />
+                                        </label>
+                                    )}
+                                </div>
+                                <input type="hidden" {...register('image_url', { required: 'Image is required' })} />
                                 {errors.image_url && (
                                     <p className="text-sm text-red-500">{errors.image_url.message}</p>
                                 )}
@@ -177,7 +239,7 @@ export default function ProductFormDialog({
                                     id="product_details"
                                     {...register('product_details')}
                                     placeholder="Premium Cotton&#10;Oversized Fit&#10;Made in Italy"
-                                    rows={6}
+                                    rows={4}
                                 />
                             </div>
 
@@ -230,13 +292,13 @@ export default function ProductFormDialog({
                                 type="button"
                                 variant="outline"
                                 onClick={onClose}
-                                disabled={isLoading}
+                                disabled={isLoading || isUploading}
                                 className="border-2 border-black font-bold"
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={isLoading} className="bg-black text-white hover:bg-white hover:text-black border-2 border-black font-bold">
-                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            <Button type="submit" disabled={isLoading || isUploading} className="bg-black text-white hover:bg-white hover:text-black border-2 border-black font-bold">
+                                {(isLoading || isUploading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 {mode === 'create' ? 'Create Product' : 'Update Product'}
                             </Button>
                         </DialogFooter>

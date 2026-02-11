@@ -184,7 +184,7 @@ export async function deleteNewArrival(id: string) {
 }
 
 /**
- * Fetch a single product by ID from either products or new_arrivals table.
+ * Fetch a single product by ID from products, new_arrivals, or featured_collection table.
  */
 export async function getAnyProductById(id: string) {
     // Try products table first
@@ -207,6 +207,17 @@ export async function getAnyProductById(id: string) {
 
     if (!arrivalError && arrival) {
         return arrival as Product;
+    }
+
+    // If still not found, try featured_collection table
+    const { data: featured, error: featuredError } = await supabase
+        .from('featured_collection')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (!featuredError && featured) {
+        return featured as Product;
     }
 
     console.error(`Product with ID ${id} not found in any table.`);

@@ -17,7 +17,7 @@ export default function ProductsPage() {
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">Products</h2>
+                <h2 className="text-2xl font-bold">Shop</h2>
                 <Button onClick={handleAddProduct}>
                     <Plus className="mr-2 h-4 w-4" /> Add Product
                 </Button>

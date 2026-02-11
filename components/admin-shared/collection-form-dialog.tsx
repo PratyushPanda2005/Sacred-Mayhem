@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Upload, X, Images } from 'lucide-react';
 import { toast } from 'sonner';
 import { uploadImage, uploadMultipleImages } from '@/lib/storage';
 
@@ -97,9 +97,9 @@ export default function CollectionFormDialog({
 
         try {
             setIsUploading(true);
-            const url = await uploadImage(e.target.files[0]);
+            const url = await uploadImage(e.target.files[0], 'product-images');
             setValue('image_url', url);
-            toast.success('Main image uploaded');
+            toast.success('Main cover image uploaded');
         } catch (error: any) {
             toast.error('Upload failed: ' + error.message);
         } finally {
@@ -112,7 +112,7 @@ export default function CollectionFormDialog({
 
         try {
             setIsUploading(true);
-            const urls = await uploadMultipleImages(Array.from(e.target.files));
+            const urls = await uploadMultipleImages(Array.from(e.target.files), 'product-images');
             const currentGallery = watch('gallery') || '';
             const newGallery = currentGallery
                 ? `${currentGallery}\n${urls.join('\n')}`
@@ -140,14 +140,14 @@ export default function CollectionFormDialog({
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[750px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>
-                        {mode === 'create' ? 'Add New Collection' : 'Edit Collection'}
+                        {mode === 'create' ? 'Add New Lookbook Collection' : 'Edit Lookbook Collection'}
                     </DialogTitle>
                     <DialogDescription>
                         {mode === 'create'
-                            ? 'Fill in the details to create a new collection.'
+                            ? 'Fill in the details to create a new lookbook collection.'
                             : 'Update the collection information below.'}
                     </DialogDescription>
                 </DialogHeader>
@@ -156,11 +156,12 @@ export default function CollectionFormDialog({
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="title">Collection Title *</Label>
+                                <Label htmlFor="title">Lookbook Title *</Label>
                                 <Input
                                     id="title"
                                     {...register('title', { required: 'Title is required' })}
                                     placeholder="e.g. CHAOS THEORY"
+                                    className="border-2 border-gray-200 focus:border-black transition-colors"
                                 />
                                 {errors.title && (
                                     <p className="text-sm text-red-500">{errors.title.message}</p>
@@ -168,11 +169,12 @@ export default function CollectionFormDialog({
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="season">Season *</Label>
+                                <Label htmlFor="season">Season/Year *</Label>
                                 <Input
                                     id="season"
                                     {...register('season', { required: 'Season is required' })}
                                     placeholder="e.g. SPRING/SUMMER 2024"
+                                    className="border-2 border-gray-200 focus:border-black transition-colors"
                                 />
                                 {errors.season && (
                                     <p className="text-sm text-red-500">{errors.season.message}</p>
@@ -182,12 +184,13 @@ export default function CollectionFormDialog({
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="piece_count">Piece Count</Label>
+                                <Label htmlFor="piece_count">Total Pieces</Label>
                                 <Input
                                     id="piece_count"
                                     type="number"
                                     {...register('piece_count', { valueAsNumber: true })}
                                     placeholder="0"
+                                    className="border-2 border-gray-200 focus:border-black transition-colors"
                                 />
                             </div>
                             <div className="flex items-center space-x-2 pt-8">
@@ -197,63 +200,112 @@ export default function CollectionFormDialog({
                                     onCheckedChange={(checked) => setValue('is_featured', checked)}
                                 />
                                 <Label htmlFor="is_featured" className="cursor-pointer font-bold">
-                                    Featured Collection
+                                    Feature on Lookbook Page
                                 </Label>
                             </div>
                         </div>
 
-                        <div className="space-y-4 p-4 border-2 border-dashed border-gray-200 rounded-lg">
-                            <Label className="flex items-center gap-2">Main Cover Image {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}</Label>
-                            <div className="flex gap-4 items-start">
-                                {imageUrl && (
-                                    <img src={imageUrl} alt="Preview" className="w-24 h-24 object-cover rounded border" />
+                        {/* Main Image Section */}
+                        <div className="space-y-2">
+                            <Label>Main Cover Image *</Label>
+                            <div className="mt-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-colors">
+                                {imageUrl ? (
+                                    <div className="relative w-full max-h-[300px] overflow-hidden rounded-md shadow-lg">
+                                        <img
+                                            src={imageUrl}
+                                            alt="Cover Preview"
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setValue('image_url', '')}
+                                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 shadow-md transition-all"
+                                        >
+                                            <X className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <label className="flex flex-col items-center justify-center w-full h-40 cursor-pointer">
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                            {isUploading ? (
+                                                <Loader2 className="w-12 h-12 text-black animate-spin" />
+                                            ) : (
+                                                <>
+                                                    <Upload className="w-12 h-12 text-gray-400 mb-2" />
+                                                    <p className="text-sm text-gray-500">
+                                                        <span className="font-semibold">Click to upload cover</span> or drag and drop
+                                                    </p>
+                                                    <p className="text-xs text-gray-400">High resolution recommended (JPG, PNG, WebP)</p>
+                                                </>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleMainImageUpload}
+                                            disabled={isUploading}
+                                        />
+                                    </label>
                                 )}
-                                <div className="flex-1 space-y-2">
-                                    <Input
-                                        id="image_url"
-                                        {...register('image_url', { required: 'Image URL is required' })}
-                                        placeholder="Image URL"
-                                    />
-                                    <div className="text-sm font-bold text-gray-500">OR</div>
-                                    <Input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleMainImageUpload}
-                                        disabled={isUploading}
-                                        className="cursor-pointer"
+                            </div>
+                            <input type="hidden" {...register('image_url', { required: 'Cover image is required' })} />
+                            {errors.image_url && (
+                                <p className="text-sm text-red-500 mt-1">{errors.image_url.message}</p>
+                            )}
+                        </div>
+
+                        {/* Gallery Section */}
+                        <div className="space-y-4">
+                            <Label className="flex items-center gap-2">
+                                <Images className="w-4 h-4" /> Gallery Images
+                            </Label>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-xs text-gray-500 uppercase tracking-wider">Upload Multiple Files</Label>
+                                    <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors h-32 relative">
+                                        <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
+                                            {isUploading ? (
+                                                <Loader2 className="w-8 h-8 text-black animate-spin" />
+                                            ) : (
+                                                <>
+                                                    <Upload className="w-8 h-8 text-gray-400 mb-1" />
+                                                    <span className="text-xs font-bold text-gray-500">Add to Gallery</span>
+                                                </>
+                                            )}
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={handleGalleryUpload}
+                                                disabled={isUploading}
+                                            />
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs text-gray-500 uppercase tracking-wider">Manual URL List</Label>
+                                    <Textarea
+                                        id="gallery"
+                                        {...register('gallery')}
+                                        placeholder="Paste image URLs here (one per line)"
+                                        rows={4}
+                                        className="border-2 border-gray-200 focus:border-black transition-colors text-sm"
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="space-y-4 p-4 border-2 border-dashed border-gray-200 rounded-lg">
-                            <Label className="flex items-center gap-2">Lookbook Gallery {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}</Label>
-                            <Textarea
-                                id="gallery"
-                                {...register('gallery')}
-                                placeholder="Paste image URLs here (one per line)"
-                                rows={6}
-                            />
-                            <div className="flex flex-col gap-2">
-                                <div className="text-sm font-bold text-gray-500">OR UPLOAD MULTIPLE</div>
-                                <Input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    onChange={handleGalleryUpload}
-                                    disabled={isUploading}
-                                    className="cursor-pointer"
-                                />
-                            </div>
-                        </div>
-
                         <div className="space-y-2">
-                            <Label htmlFor="description">Description *</Label>
+                            <Label htmlFor="description">Lookbook Description *</Label>
                             <Textarea
                                 id="description"
                                 {...register('description', { required: 'Description is required' })}
-                                placeholder="Enter collection description"
+                                placeholder="Enter collection story or description"
                                 rows={4}
+                                className="border-2 border-gray-200 focus:border-black transition-colors"
                             />
                             {errors.description && (
                                 <p className="text-sm text-red-500">{errors.description.message}</p>
@@ -261,17 +313,17 @@ export default function CollectionFormDialog({
                         </div>
                     </div>
 
-                    <DialogFooter className="gap-2">
+                    <DialogFooter className="gap-2 pt-4 border-t">
                         <Button
                             type="button"
                             variant="outline"
                             onClick={onClose}
                             disabled={isLoading || isUploading}
-                            className="border-2 border-black font-bold"
+                            className="border-2 border-black font-bold h-12 px-8"
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isLoading || isUploading} className="bg-black text-white hover:bg-white hover:text-black border-2 border-black font-bold">
+                        <Button type="submit" disabled={isLoading || isUploading} className="bg-black text-white hover:bg-white hover:text-black border-2 border-black font-bold h-12 px-8 transition-all">
                             {(isLoading || isUploading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             {mode === 'create' ? 'Create Collection' : 'Update Collection'}
                         </Button>

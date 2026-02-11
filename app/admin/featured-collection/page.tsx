@@ -17,9 +17,9 @@ export default function FeaturedCollectionPage() {
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">Featured Collection</h2>
+                <h2 className="text-2xl font-bold">Spotlight Collection</h2>
                 <Button onClick={handleAddFeatured}>
-                    <Plus className="mr-2 h-4 w-4" /> Add Featured Item
+                    <Plus className="mr-2 h-4 w-4" /> Add Spotlight Item
                 </Button>
             </div>
             <AdminFeaturedCollectionMain brands={[]} categories={[]} shops={[]} isVendor={false} />

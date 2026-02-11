@@ -50,11 +50,11 @@ export default function AdminFeaturedCollectionMain({ brands, categories, shops,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-featured-collection'] });
             queryClient.invalidateQueries({ queryKey: ['featured-collection'] });
-            toast.success('Featured item deleted successfully');
+            toast.success('Spotlight item deleted successfully');
             setDeleteDialogOpen(false);
         },
         onError: (error) => {
-            toast.error('Failed to delete featured item: ' + error.message);
+            toast.error('Failed to delete spotlight item: ' + error.message);
         }
     });
 
@@ -63,12 +63,12 @@ export default function AdminFeaturedCollectionMain({ brands, categories, shops,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-featured-collection'] });
             queryClient.invalidateQueries({ queryKey: ['featured-collection'] });
-            toast.success('Featured item created successfully');
+            toast.success('Spotlight item created successfully');
             setFormDialogOpen(false);
             setEditingItem(null);
         },
         onError: (error) => {
-            toast.error('Failed to create featured item: ' + error.message);
+            toast.error('Failed to create spotlight item: ' + error.message);
         }
     });
 
@@ -77,12 +77,12 @@ export default function AdminFeaturedCollectionMain({ brands, categories, shops,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin-featured-collection'] });
             queryClient.invalidateQueries({ queryKey: ['featured-collection'] });
-            toast.success('Featured item updated successfully');
+            toast.success('Spotlight item updated successfully');
             setFormDialogOpen(false);
             setEditingItem(null);
         },
         onError: (error) => {
-            toast.error('Failed to update featured item: ' + error.message);
+            toast.error('Failed to update spotlight item: ' + error.message);
         }
     });
 
@@ -159,8 +159,8 @@ export default function AdminFeaturedCollectionMain({ brands, categories, shops,
                 onClose={handleDeleteClose}
                 onDelete={handleDeleteConfirm}
                 isLoading={isDeleting}
-                title="Delete Featured Item"
-                description='Are you really sure you want to remove this item from the featured collection? Just making sure before we go ahead with it.'
+                title="Delete Spotlight Item"
+                description='Are you really sure you want to remove this item from the spotlight collection? Just making sure before we go ahead with it.'
             />
 
             <ProductFormDialog
@@ -170,8 +170,8 @@ export default function AdminFeaturedCollectionMain({ brands, categories, shops,
                 isLoading={isCreating || isUpdating}
                 initialData={editingItem}
                 mode={formMode}
-                title={formMode === 'create' ? 'Add Featured Item' : 'Edit Featured Item'}
-                description={formMode === 'create' ? 'Fill in the details for the featured item.' : 'Update the item details.'}
+                title={formMode === 'create' ? 'Add Spotlight Item' : 'Edit Spotlight Item'}
+                description={formMode === 'create' ? 'Fill in the details for the spotlight item.' : 'Update the item details.'}
             />
 
             <Table

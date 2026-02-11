@@ -205,7 +205,7 @@ export default function AboutPage() {
         </section>
 
         {/* Values Section */}
-        <section className="py-20 bg-white">
+        {/* <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               className="text-center mb-16"
@@ -237,10 +237,10 @@ export default function AboutPage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Meet the Team Section */}
-        <section className="py-20 bg-black text-white">
+        {/* <section className="py-20 bg-black text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               className="text-center mb-16"
@@ -322,10 +322,10 @@ export default function AboutPage() {
               </div>
             </motion.div>
           </div>
-        </section>
+        </section> */}
 
         {/* Mission Statement */}
-        <section className="py-20 bg-white">
+        {/* <section className="py-20 bg-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
@@ -345,7 +345,7 @@ export default function AboutPage() {
               </Link>
             </motion.div>
           </div>
-        </section>
+        </section> */}
       </div>
     </div>
   )

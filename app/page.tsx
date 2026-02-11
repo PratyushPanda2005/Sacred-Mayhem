@@ -170,7 +170,7 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-4">FEATURED COLLECTION</h2>
+            <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-4">SPOTLIGHT COLLECTION</h2>
             <p className="text-xl tracking-widest">EMBRACE THE CHAOS</p>
           </motion.div>
 
@@ -277,10 +277,7 @@ export default function HomePage() {
                 REBELLION
               </motion.span>
             </h2>
-            <p className="text-xl mb-12 leading-relaxed">
-              Sacred Mayhem isn't just a brand—it's a movement. We create luxury streetwear for those who dare to be
-              different, who embrace chaos, and who understand that true style comes from authentic self-expression.
-            </p>
+
             <Link href="/about">
               <Button className="bg-white text-black hover:bg-black hover:text-white border-2 border-white px-8 py-4 text-lg font-bold tracking-wider transition-all duration-300">
                 OUR STORY
@@ -291,7 +288,7 @@ export default function HomePage() {
       </section>
 
       {/* Newsletter */}
-      <section className="py-20 bg-white">
+      {/* <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -313,7 +310,7 @@ export default function HomePage() {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <footer className="bg-white border-t border-black py-12">
@@ -323,31 +320,7 @@ export default function HomePage() {
               <h3 className="text-2xl font-black tracking-wider mb-4">SACRED MAYHEM</h3>
               <p className="tracking-wide">Luxury streetwear for the rebellious soul.</p>
             </div>
-            <div>
-              <h4 className="font-bold tracking-wider mb-4">SHOP</h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/new-arrivals" className="hover:underline">
-                    New Arrivals
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/shop" className="hover:underline">
-                    All Products
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/sale" className="hover:underline">
-                    Archives
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/collections" className="hover:underline">
-                    Collections
-                  </Link>
-                </li>
-              </ul>
-            </div>
+
             <div>
               <h4 className="font-bold tracking-wider mb-4">SUPPORT</h4>
               <ul className="space-y-2">
