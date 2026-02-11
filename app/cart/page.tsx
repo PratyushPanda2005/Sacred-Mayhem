@@ -9,7 +9,7 @@ import Navigation from "@/components/navigation"
 import Link from "next/link"
 
 interface CartItem {
-  id: number
+  id: string
   name: string
   price: number
   image: string
@@ -31,32 +31,44 @@ export default function CartPage() {
   const [appliedPromo, setAppliedPromo] = useState<string | null>(null)
   const [promoError, setPromoError] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   useEffect(() => {
     const savedCart = localStorage.getItem("sacred-mayhem-cart")
     if (savedCart) {
       setCartItems(JSON.parse(savedCart))
     }
+    setIsInitialLoad(false)
     setIsLoading(false)
   }, [])
 
   useEffect(() => {
-    localStorage.setItem("sacred-mayhem-cart", JSON.stringify(cartItems))
-  }, [cartItems])
+    if (!isInitialLoad) {
+      localStorage.setItem("sacred-mayhem-cart", JSON.stringify(cartItems))
+    }
+  }, [cartItems, isInitialLoad])
 
-  const updateQuantity = (id: number, newQuantity: number) => {
+  const updateQuantity = (id: string, size: string | undefined, color: string | undefined, newQuantity: number) => {
     if (newQuantity === 0) {
-      removeItem(id)
+      removeItem(id, size, color)
       return
     }
 
     setCartItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item)),
+      prev.map((item) =>
+        item.id === id && item.selectedSize === size && item.selectedColor === color
+          ? { ...item, quantity: Math.max(1, newQuantity) }
+          : item
+      ),
     )
   }
 
-  const removeItem = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id))
+  const removeItem = (id: string, size: string | undefined, color: string | undefined) => {
+    setCartItems((prev) =>
+      prev.filter(
+        (item) => !(item.id === id && item.selectedSize === size && item.selectedColor === color)
+      )
+    )
   }
 
   const applyPromoCode = () => {
@@ -184,7 +196,7 @@ export default function CartPage() {
 
                       <div className="flex items-center space-x-3">
                         <Button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.id, item.selectedSize, item.selectedColor, item.quantity - 1)}
                           className="p-2 border border-black hover:bg-black hover:text-white transition-all duration-300"
                           size="sm"
                         >
@@ -192,7 +204,7 @@ export default function CartPage() {
                         </Button>
                         <span className="text-lg font-bold w-8 text-center">{item.quantity}</span>
                         <Button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.id, item.selectedSize, item.selectedColor, item.quantity + 1)}
                           className="p-2 border border-black hover:bg-black hover:text-white transition-all duration-300"
                           size="sm"
                         >
@@ -203,7 +215,7 @@ export default function CartPage() {
                       <div className="text-right">
                         <p className="text-xl font-black mb-2">${(item.price * item.quantity).toFixed(2)}</p>
                         <Button
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(item.id, item.selectedSize, item.selectedColor)}
                           className="p-2 text-red-600 hover:bg-red-50 transition-all duration-300"
                           size="sm"
                         >

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import Navigation from "@/components/navigation"
 import Link from "next/link"
 import { getAnyProductById } from "@/lib/products"
+import { toast } from "sonner"
 
 export default function ProductPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<any>(null)
@@ -16,8 +17,22 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [selectedSize, setSelectedSize] = useState("")
   const [selectedColor, setSelectedColor] = useState("")
   const [quantity, setQuantity] = useState(1)
+  const [cartItems, setCartItems] = useState<any[]>([])
+  const [wishlistItems, setWishlistItems] = useState<any[]>([])
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [activeTab, setActiveTab] = useState("description")
+
+  useEffect(() => {
+    const savedCart = localStorage.getItem("sacred-mayhem-cart")
+    const savedWishlist = localStorage.getItem("sacred-mayhem-wishlist")
+
+    if (savedCart) setCartItems(JSON.parse(savedCart))
+    if (savedWishlist) {
+      const wishlist = JSON.parse(savedWishlist)
+      setWishlistItems(wishlist)
+      setIsWishlisted(wishlist.some((item: any) => item.id === params.id))
+    }
+  }, [params.id])
 
   useEffect(() => {
     async function fetchProduct() {
@@ -58,6 +73,56 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     fetchProduct()
   }, [params.id])
 
+  const addToCart = () => {
+    if (!selectedSize) return
+
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      selectedSize: selectedSize,
+      selectedColor: selectedColor,
+      quantity: quantity,
+      category: product.category || "EXCLUSIVE"
+    }
+
+    const savedCart = localStorage.getItem("sacred-mayhem-cart")
+    let newCart = savedCart ? JSON.parse(savedCart) : []
+
+    const existingItemIndex = newCart.findIndex(
+      (item: any) => item.id === cartItem.id && item.selectedSize === cartItem.selectedSize && item.selectedColor === cartItem.selectedColor
+    )
+
+    if (existingItemIndex > -1) {
+      newCart[existingItemIndex].quantity += quantity
+    } else {
+      newCart = [...newCart, cartItem]
+    }
+
+    setCartItems(newCart)
+    localStorage.setItem("sacred-mayhem-cart", JSON.stringify(newCart))
+    toast.success("Added to cart")
+  }
+
+  const toggleWishlist = () => {
+    const isInWishlist = wishlistItems.some((item) => item.id === product.id)
+    let newWishlist
+
+    if (isInWishlist) {
+      newWishlist = wishlistItems.filter((item) => item.id !== product.id)
+      setIsWishlisted(false)
+      toast.success("Removed from wishlist")
+    } else {
+      newWishlist = [...wishlistItems, product]
+      setIsWishlisted(true)
+      toast.success("Added to wishlist")
+    }
+
+    setWishlistItems(newWishlist)
+    localStorage.setItem("sacred-mayhem-wishlist", JSON.stringify(newWishlist))
+  }
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star key={i} className={`w-4 h-4 ${i < Math.floor(rating) ? "fill-current text-black" : "text-gray-300"}`} />
@@ -94,7 +159,10 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="bg-white text-black min-h-screen">
-      <Navigation />
+      <Navigation
+        cartItemCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+        wishlistCount={wishlistItems.length}
+      />
 
       <div className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -287,6 +355,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               >
                 <Button
                   disabled={!selectedSize}
+                  onClick={addToCart}
                   className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black py-4 text-lg font-bold tracking-wider transition-all duration-300 disabled:opacity-50"
                 >
                   <ShoppingBag className="w-5 h-5 mr-2" />
@@ -294,7 +363,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 </Button>
 
                 <Button
-                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  onClick={toggleWishlist}
                   className={`w-full border-2 border-black py-4 text-lg font-bold tracking-wider transition-all duration-300 ${isWishlisted
                     ? "bg-black text-white hover:bg-white hover:text-black"
                     : "bg-white text-black hover:bg-black hover:text-white"

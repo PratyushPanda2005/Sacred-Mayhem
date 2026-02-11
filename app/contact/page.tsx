@@ -148,8 +148,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold tracking-wider mb-2">EMAIL</h3>
-                    <p className="text-lg">hello@sacredmayhem.com</p>
-                    <p className="text-lg">support@sacredmayhem.com</p>
+                    <p className="text-lg">orders@sacredmayhem.club</p>
                   </div>
                 </div>
 
@@ -159,7 +158,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold tracking-wider mb-2">PHONE</h3>
-                    <p className="text-lg">+1 (555) 123-4567</p>
+                    <p className="text-lg">+971 502575498</p>
                     <p className="text-sm">Mon-Fri 9AM-6PM EST</p>
                   </div>
                 </div>

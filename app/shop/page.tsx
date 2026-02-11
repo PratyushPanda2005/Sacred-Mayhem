@@ -12,6 +12,7 @@ import Link from "next/link"
 
 import { useQuery } from "@tanstack/react-query"
 import { getProducts } from "@/lib/products"
+import { toast } from "sonner"
 
 interface Product {
   id: string
@@ -67,6 +68,8 @@ export default function ShopPage() {
     originalPrice: undefined
   })), [fetchedProducts]);
 
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
+
   // Load cart and wishlist from localStorage
   useEffect(() => {
     const savedCart = localStorage.getItem("sacred-mayhem-cart")
@@ -77,17 +80,22 @@ export default function ShopPage() {
     if (savedWishlist) {
       setWishlist(JSON.parse(savedWishlist))
     }
+    setIsInitialLoad(false)
   }, [])
 
   // Save cart to localStorage
   useEffect(() => {
-    localStorage.setItem("sacred-mayhem-cart", JSON.stringify(cart))
-  }, [cart])
+    if (!isInitialLoad) {
+      localStorage.setItem("sacred-mayhem-cart", JSON.stringify(cart))
+    }
+  }, [cart, isInitialLoad])
 
   // Save wishlist to localStorage
   useEffect(() => {
-    localStorage.setItem("sacred-mayhem-wishlist", JSON.stringify(wishlist))
-  }, [wishlist])
+    if (!isInitialLoad) {
+      localStorage.setItem("sacred-mayhem-wishlist", JSON.stringify(wishlist))
+    }
+  }, [wishlist, isInitialLoad])
 
   // Filter and sort products
   // useEffect(() => {
@@ -165,36 +173,51 @@ export default function ShopPage() {
 
 
   const addToCart = (product: Product, selectedSize?: string, selectedColor?: string) => {
+    const size = selectedSize || product.sizes[0]
+    const color = selectedColor || product.colors[0]
+
     setCart((prev) => {
       const existingItem = prev.find(
-        (item) => item.id === product.id && item.selectedSize === selectedSize && item.selectedColor === selectedColor,
+        (item) => item.id === product.id && item.selectedSize === size && item.selectedColor === color,
       )
 
       if (existingItem) {
         if (existingItem.quantity < product.stock) {
+          toast.success(`Updated ${product.name} quantity in cart`)
           return prev.map((item) =>
-            item.id === product.id && item.selectedSize === selectedSize && item.selectedColor === selectedColor
+            item.id === product.id && item.selectedSize === size && item.selectedColor === color
               ? { ...item, quantity: item.quantity + 1 }
               : item,
           )
         }
-        return prev // Don't add if at stock limit
+        toast.error("Reached stock limit")
+        return prev
       }
 
+      toast.success(`Added ${product.name} to cart`)
       return [
         ...prev,
         {
           ...product,
           quantity: 1,
-          selectedSize: selectedSize || product.sizes[0],
-          selectedColor: selectedColor || product.colors[0],
+          selectedSize: size,
+          selectedColor: color,
         },
       ]
     })
   }
 
   const toggleWishlist = (productId: string) => {
-    setWishlist((prev) => (prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]))
+    setWishlist((prev) => {
+      const isInWishlist = prev.includes(productId)
+      if (isInWishlist) {
+        toast.success("Removed from wishlist")
+        return prev.filter((id) => id !== productId)
+      } else {
+        toast.success("Added to wishlist")
+        return [...prev, productId]
+      }
+    })
   }
 
   const categories = ["ALL", ...Array.from(new Set(products.map((p) => p.category)))]

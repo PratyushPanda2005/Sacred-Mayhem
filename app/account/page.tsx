@@ -238,7 +238,7 @@ export default function AccountPage() {
 
   return (
     <div className="bg-white text-black min-h-screen">
-      <Navigation cartItemCount={cartItemCount} wishlistCount={wishlist.length} onCartOpen={() => {}} />
+      <Navigation cartItemCount={cartItemCount} wishlistCount={wishlist.length} onCartOpen={() => { }} />
 
       <div className="pt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

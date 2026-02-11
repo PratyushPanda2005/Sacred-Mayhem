@@ -6,6 +6,7 @@ import { ArrowRight, Heart, Eye, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Navigation from "@/components/navigation"
 import Link from "next/link"
+import { toast } from "sonner"
 
 // const featuredProducts = [
 //   {
@@ -57,8 +58,10 @@ export default function HomePage() {
 
     if (isInWishlist) {
       newWishlist = wishlistItems.filter((item) => item.id !== product.id)
+      toast.success("Removed from wishlist")
     } else {
       newWishlist = [...wishlistItems, product]
+      toast.success("Added to wishlist")
     }
 
     setWishlistItems(newWishlist)
@@ -353,25 +356,23 @@ export default function HomePage() {
             </div>
             <div>
               <h4 className="font-bold tracking-wider mb-4">CONNECT</h4>
-              <ul className="space-y-2">
+              <ul className="space-x-2 flex">
                 <li>
                   <a href="#" className="hover:underline">
-                    Instagram
+                    <img
+                      src="/instagram.png"
+                      alt="Instagram"
+                      className="w-7 h-7"
+                    />
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:underline">
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline">
-                    TikTok
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline">
-                    Newsletter
+                    <img
+                      src="/whatsapp.png"
+                      alt="whatsapp"
+                      className="w-6 h-6"
+                    />
                   </a>
                 </li>
               </ul>

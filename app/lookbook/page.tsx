@@ -98,11 +98,7 @@ export default function LookbookPage() {
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
                     </Link>
-                    <Link href="/shop" className="flex-1">
-                      <Button variant="outline" className="bg-transparent text-black hover:bg-black hover:text-white border-2 border-black px-8 py-4 text-lg font-bold tracking-wider transition-all duration-300 w-full sm:w-auto">
-                        SHOP PIECES
-                      </Button>
-                    </Link>
+
                   </div>
                 </div>
               </motion.div>
@@ -110,7 +106,7 @@ export default function LookbookPage() {
           </div>
 
           {/* Newsletter Signup */}
-          <motion.div
+          {/* <motion.div
             className="mt-20 bg-black text-white p-12 text-center"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -128,7 +124,7 @@ export default function LookbookPage() {
                 SUBSCRIBE
               </Button>
             </div>
-          </motion.div>
+          </motion.div> */}
         </div>
       </div>
     </div>

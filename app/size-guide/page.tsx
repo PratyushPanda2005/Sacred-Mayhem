@@ -6,40 +6,23 @@ import Navigation from "@/components/navigation"
 import Link from "next/link"
 
 const sizeCharts = {
-  tops: {
-    title: "TOPS (TEE, HOODIE, TANK)",
-    headers: ["SIZE", "CHEST", "LENGTH", "SHOULDER"],
+  tshirts: {
+    title: "T-SHIRTS",
+    headers: ["SIZE", "LENGTH", "SHOULDER", "CHEST", "SLEEVE LENGTH", "SLEEVE OPENING", "ARMHOLE"],
     rows: [
-      ["XS", '18"', '26"', '17"'],
-      ["S", '20"', '27"', '18"'],
-      ["M", '22"', '28"', '19"'],
-      ["L", '24"', '29"', '20"'],
-      ["XL", '26"', '30"', '21"'],
-      ["XXL", '28"', '31"', '22"'],
+      ["M", '27.5"', '22"', '48"', '12"', '16"', '23"'],
+      ["L", '28.5"', '23"', '50"', '12.5"', '16.5"', '24"'],
     ],
   },
-  bottoms: {
-    title: "BOTTOMS (PANTS, SHORTS)",
-    headers: ["SIZE", "WAIST", "INSEAM", "RISE"],
+  shirts: {
+    title: "SHIRTS",
+    headers: ["SIZE", "LENGTH", "SHOULDER", "CHEST", "SLEEVE LENGTH", "SLEEVE OPENING", "ARMHOLE"],
     rows: [
-      ["XS", '28"', '30"', '10"'],
-      ["S", '30"', '30"', '10.5"'],
-      ["M", '32"', '31"', '11"'],
-      ["L", '34"', '31"', '11.5"'],
-      ["XL", '36"', '32"', '12"'],
-      ["XXL", '38"', '32"', '12.5"'],
-    ],
-  },
-  outerwear: {
-    title: "OUTERWEAR (BOMBER, JACKET)",
-    headers: ["SIZE", "CHEST", "LENGTH", "SLEEVE"],
-    rows: [
-      ["XS", '20"', '25"', '24"'],
-      ["S", '22"', '26"', '25"'],
-      ["M", '24"', '27"', '26"'],
-      ["L", '26"', '28"', '27"'],
-      ["XL", '28"', '29"', '28"'],
-      ["XXL", '30"', '30"', '29"'],
+      ["S", '25.5"', '21"', '44"', '11.5"', '22"', '22"'],
+      ["M", '26.5"', '22"', '46"', '12"', '23"', '23"'],
+      ["L", '27.5"', '23"', '48"', '12.5"', '24"', '24"'],
+      ["XL", '28.5"', '24"', '50"', '13"', '25"', '25"'],
+      ["XXL", '29.5"', '25"', '52"', '13.5"', '26"', '26"'],
     ],
   },
 }
@@ -80,7 +63,7 @@ export default function SizeGuidePage() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <h2 className="text-3xl font-black tracking-wider mb-8 text-center">HOW TO MEASURE</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="text-center">
                 <h3 className="text-lg font-bold tracking-wider mb-4">CHEST</h3>
                 <p className="text-sm leading-relaxed">
@@ -88,21 +71,33 @@ export default function SizeGuidePage() {
                 </p>
               </div>
               <div className="text-center">
-                <h3 className="text-lg font-bold tracking-wider mb-4">WAIST</h3>
-                <p className="text-sm leading-relaxed">
-                  Measure around your natural waistline, which is the narrowest part of your torso.
-                </p>
-              </div>
-              <div className="text-center">
                 <h3 className="text-lg font-bold tracking-wider mb-4">LENGTH</h3>
                 <p className="text-sm leading-relaxed">
-                  For tops, measure from the highest point of the shoulder to the desired length.
+                  Measure from the highest point of the shoulder to the bottom hem of the garment.
                 </p>
               </div>
               <div className="text-center">
-                <h3 className="text-lg font-bold tracking-wider mb-4">INSEAM</h3>
+                <h3 className="text-lg font-bold tracking-wider mb-4">SHOULDER</h3>
                 <p className="text-sm leading-relaxed">
-                  For bottoms, measure from the crotch seam to the desired hem length.
+                  Measure from one shoulder point to the other across the natural curve of your upper back.
+                </p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-bold tracking-wider mb-4">SLEEVE LENGTH</h3>
+                <p className="text-sm leading-relaxed">
+                  Measure from the shoulder seam down to the end of the sleeve.
+                </p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-bold tracking-wider mb-4">ARMHOLE</h3>
+                <p className="text-sm leading-relaxed">
+                  Measure the circumference of the sleeve where it attaches to the body of the garment.
+                </p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-lg font-bold tracking-wider mb-4">SLEEVE OPENING</h3>
+                <p className="text-sm leading-relaxed">
+                  Measure the width of the sleeve at its bottom opening.
                 </p>
               </div>
             </div>
