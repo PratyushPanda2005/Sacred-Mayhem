@@ -76,9 +76,8 @@ export default function CollectionsPage() {
             {collections.map((collection, index) => (
               <motion.div
                 key={collection.id}
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${
-                  index % 2 === 1 ? "lg:grid-flow-col-dense" : ""
-                }`}
+                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? "lg:grid-flow-col-dense" : ""
+                  }`}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
@@ -151,6 +150,93 @@ export default function CollectionsPage() {
           </motion.div>
         </div>
       </div>
+      {/* Footer */}
+      <footer className="bg-white border-t border-black py-14 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Top Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
+
+            {/* Support */}
+            <div>
+              <h4 className="font-bold tracking-widest mb-5 text-sm">
+                SUPPORT
+              </h4>
+
+              <ul className="space-y-3 text-sm tracking-wide">
+                <li>
+                  <Link href="/size-guide" className="hover:underline underline-offset-4">
+                    Size Guide
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/returns" className="hover:underline underline-offset-4">
+                    Returns
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/shipping" className="hover:underline underline-offset-4">
+                    Shipping
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:underline underline-offset-4">
+                    Contact
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faq" className="hover:underline underline-offset-4">
+                    FAQ
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Brand */}
+            <div className="flex flex-col items-center md:items-center text-center">
+              <h3 className="text-2xl font-black tracking-widest mb-4">
+                SACRED MAYHEM
+              </h3>
+              <p className="tracking-wide text-sm max-w-xs">
+                Luxury streetwear for the rebellious soul.
+              </p>
+            </div>
+
+            {/* Connect */}
+            <div className="md:flex md:flex-col md:items-end text-center md:text-right">
+              <h4 className="font-bold tracking-widest mb-5 text-sm">
+                CONNECT
+              </h4>
+
+              <div className="flex justify-center md:justify-end gap-5">
+                <a href="#" className="hover:opacity-70 transition">
+                  <img src="/instagram.png" alt="Instagram" className="w-7 h-7" />
+                </a>
+
+                <a href="#" className="hover:opacity-70 transition">
+                  <img src="/whatsapp.png" alt="Whatsapp" className="w-6 h-6" />
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom Section */}
+          <div className="border-t border-black mt-12 pt-8 flex flex-col items-center gap-3 text-center">
+            <p className="tracking-widest text-xs sm:text-sm">
+              &copy; 2026 SACRED MAYHEM. ALL RIGHTS RESERVED.
+            </p>
+
+            <Link
+              href="/admin/login"
+              className="text-xs text-gray-500 hover:text-black transition-colors tracking-wide"
+            >
+              Admin Access
+            </Link>
+          </div>
+
+        </div>
+      </footer>
     </div>
   )
 }
