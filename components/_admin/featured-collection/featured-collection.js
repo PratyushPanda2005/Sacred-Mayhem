@@ -101,7 +101,9 @@ export default function AdminFeaturedCollectionMain({ brands, categories, shops,
             product_details: item.product_details || '',
             stockQuantity: item.stockQuantity || 0,
             rating: item.rating || 0,
-            reviews_count: item.reviews_count || 0
+            reviews_count: item.reviews_count || 0,
+            gallery: item.gallery || [],
+            is_sold_out: item.is_sold_out || false
         });
         setSelectedItemId(item.id);
         setFormMode('edit');

@@ -104,7 +104,9 @@ export default function AdminProductsMain({ brands, categories, shops, isVendor,
       product_details: product.product_details || '',
       stockQuantity: product.stockQuantity || 0,
       rating: product.rating || 0,
-      reviews_count: product.reviews_count || 0
+      reviews_count: product.reviews_count || 0,
+      gallery: product.gallery || [],
+      is_sold_out: product.is_sold_out || false
     });
     setSelectedProductId(product.id);
     setFormMode('edit');

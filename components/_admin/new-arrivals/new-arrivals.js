@@ -101,7 +101,9 @@ export default function AdminNewArrivalsMain({ brands, categories, shops, isVend
             product_details: arrival.product_details || '',
             stockQuantity: arrival.stockQuantity || 0,
             rating: arrival.rating || 0,
-            reviews_count: arrival.reviews_count || 0
+            reviews_count: arrival.reviews_count || 0,
+            gallery: arrival.gallery || [],
+            is_sold_out: arrival.is_sold_out || false
         });
         setSelectedArrivalId(arrival.id);
         setFormMode('edit');

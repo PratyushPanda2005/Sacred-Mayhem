@@ -77,9 +77,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <Link href="/admin" className="block p-2 hover:bg-gray-200 rounded">
                         Dashboard
                     </Link>
-                    <Link href="/admin/categories" className="block p-2 hover:bg-gray-200 rounded">
-                        Categories
-                    </Link>
                     <Link href="/admin/products" className="block p-2 hover:bg-gray-200 rounded">
                         Shop
                     </Link>

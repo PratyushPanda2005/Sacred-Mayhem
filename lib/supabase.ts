@@ -22,6 +22,8 @@ export type Product = {
     product_details?: string;
     rating?: number;
     reviews_count?: number;
+    gallery?: string[];
+    is_sold_out: boolean;
 };
 
 export type Enquiry = {

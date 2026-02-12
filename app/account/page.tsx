@@ -671,7 +671,7 @@ export default function AccountPage() {
             </div>
           </div>
           <div className="border-t border-black mt-8 pt-8 text-center">
-            <p className="tracking-wider">&copy; 2024 SACRED MAYHEM. ALL RIGHTS RESERVED.</p>
+            <p className="tracking-wider">&copy; 2026 SACRED MAYHEM. ALL RIGHTS RESERVED.</p>
           </div>
         </div>
       </footer>

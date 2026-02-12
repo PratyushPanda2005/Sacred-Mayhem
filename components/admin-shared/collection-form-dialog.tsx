@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Loader2, Upload, X, Images } from 'lucide-react';
+import { Loader2, Upload, X, Images, ArrowLeft as ArrowLeftIcon, ArrowRight as ArrowRightIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { uploadImage, uploadMultipleImages } from '@/lib/storage';
 
@@ -257,9 +257,63 @@ export default function CollectionFormDialog({
 
                         {/* Gallery Section */}
                         <div className="space-y-4">
-                            <Label className="flex items-center gap-2">
+                            <Label className="flex items-center gap-2 font-bold">
                                 <Images className="w-4 h-4" /> Gallery Images
                             </Label>
+
+                            {/* Visual Gallery Preview with Reordering */}
+                            {(watch('gallery') || '').split('\n').filter(url => url.trim() !== '').length > 0 && (
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 mb-4 p-4 bg-gray-50 rounded-lg border-2 border-gray-100">
+                                    {(watch('gallery') || '').split('\n').filter(url => url.trim() !== '').map((url, index, array) => (
+                                        <div key={index} className="relative aspect-[3/4] border-2 border-white shadow-sm rounded-md overflow-hidden group bg-black">
+                                            <img src={url} alt={`Gallery ${index}`} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+
+                                            {/* Delete Button */}
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const filtered = array.filter((_, i) => i !== index).join('\n');
+                                                    setValue('gallery', filtered);
+                                                }}
+                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+
+                                            {/* Reorder Controls */}
+                                            <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    type="button"
+                                                    disabled={index === 0}
+                                                    onClick={() => {
+                                                        const newArray = [...array];
+                                                        [newArray[index - 1], newArray[index]] = [newArray[index], newArray[index - 1]];
+                                                        setValue('gallery', newArray.join('\n'));
+                                                    }}
+                                                    className="bg-black/70 text-white p-1 rounded-md hover:bg-black disabled:opacity-30"
+                                                >
+                                                    <ArrowLeftIcon className="w-3 h-3" />
+                                                </button>
+                                                <span className="bg-black/70 text-white px-2 py-0.5 rounded-md text-[10px] font-bold self-center">
+                                                    {index + 1}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    disabled={index === array.length - 1}
+                                                    onClick={() => {
+                                                        const newArray = [...array];
+                                                        [newArray[index + 1], newArray[index]] = [newArray[index], newArray[index + 1]];
+                                                        setValue('gallery', newArray.join('\n'));
+                                                    }}
+                                                    className="bg-black/70 text-white p-1 rounded-md hover:bg-black disabled:opacity-30"
+                                                >
+                                                    <ArrowRightIcon className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">

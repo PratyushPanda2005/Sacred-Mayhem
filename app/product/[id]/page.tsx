@@ -2,7 +2,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Heart, ShoppingBag, ArrowLeft, Plus, Minus, Star, Truck, Shield, RotateCcw, Loader2 } from "lucide-react"
+import { Heart, ShoppingBag, ArrowLeft, Plus, Minus, Star, Truck, Shield, RotateCcw, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Navigation from "@/components/navigation"
@@ -41,7 +41,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         // Map database fields to UI fields
         const mappedProduct = {
           ...data,
-          images: data.image_url ? [data.image_url] : ["/placeholder.svg?height=600&width=600&text=PRODUCT+IMAGE"],
+          images: [
+            data.image_url,
+            ...(data.gallery || [])
+          ].filter(Boolean).length > 0
+            ? [data.image_url, ...(data.gallery || [])].filter(Boolean)
+            : ["/placeholder.svg?height=600&width=600&text=PRODUCT+IMAGE"],
           category: "EXCLUSIVE",
           longDescription: data.description,
           details: data.product_details
@@ -58,6 +63,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             { icon: RotateCcw, title: "30-Day Returns", description: "Easy returns & exchanges" },
             { icon: Shield, title: "Authenticity", description: "100% authentic guarantee" },
           ],
+          is_sold_out: data.is_sold_out || false
         }
         setProduct(mappedProduct)
         if (mappedProduct.colors && mappedProduct.colors.length > 0) {
@@ -197,6 +203,33 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     transition={{ duration: 0.3 }}
                   />
                 </AnimatePresence>
+
+                {/* Sold Out Overlay */}
+                {product.is_sold_out && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20 pointer-events-none">
+                    <div className="bg-white text-black px-8 py-4 font-black text-2xl tracking-tighter transform -rotate-12 border-4 border-black">
+                      SOLD OUT
+                    </div>
+                  </div>
+                )}
+
+                {/* Carousel Controls */}
+                {product.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setSelectedImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={() => setSelectedImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1))}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition-all z-10"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                  </>
+                )}
 
                 {/* Image Navigation Dots */}
                 {product.images.length > 1 && (
@@ -354,12 +387,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <Button
-                  disabled={!selectedSize}
+                  disabled={!selectedSize || product.is_sold_out}
                   onClick={addToCart}
                   className="w-full bg-black text-white hover:bg-white hover:text-black border-2 border-black py-4 text-lg font-bold tracking-wider transition-all duration-300 disabled:opacity-50"
                 >
                   <ShoppingBag className="w-5 h-5 mr-2" />
-                  ADD TO CART - ${product.price * quantity}
+                  {product.is_sold_out ? 'OUT OF STOCK' : `ADD TO CART - $${product.price * quantity}`}
                 </Button>
 
                 <Button

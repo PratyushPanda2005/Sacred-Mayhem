@@ -41,7 +41,8 @@ export default function HomePage() {
     image: p.image_url,
     hoverImage: p.image_url, // Use same image for now
     category: "EXCLUSIVE", // Default or extract if possible
-    isNew: new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // New if within 30 days
+    isNew: new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // New if within 30 days
+    isSoldOut: p.is_sold_out || false
   })) || [];
 
   useEffect(() => {
@@ -173,7 +174,7 @@ export default function HomePage() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-4">SPOTLIGHT COLLECTION</h2>
+            <h2 className="text-5xl md:text-6xl font-black tracking-tighter mb-4">IN THE SPOTLIGHT</h2>
             <p className="text-xl tracking-widest">EMBRACE THE CHAOS</p>
           </motion.div>
 
@@ -200,9 +201,15 @@ export default function HomePage() {
                         className="w-full h-full object-cover filter grayscale transition-all duration-500 group-hover:scale-105"
                       />
 
-                      {product.isNew && (
-                        <div className="absolute top-4 left-4 bg-black text-white px-3 py-1 text-xs font-bold tracking-wider">
-                          NEW
+                      <div className="absolute top-4 left-4 bg-black text-white px-3 py-1 text-xs font-bold tracking-wider space-y-2">
+                        {product.isNew && <div>NEW</div>}
+                        {product.isSoldOut && <div className="bg-red-600 text-white px-2 py-1">SOLD OUT</div>}
+                      </div>
+
+                      {/* Sold Out Overlay */}
+                      {product.isSoldOut && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10 pointer-events-none">
+                          <span className="text-white font-black text-xl tracking-tighter border-2 border-white px-4 py-2 transform -rotate-12">SOLD OUT</span>
                         </div>
                       )}
 
@@ -379,7 +386,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="border-t border-black mt-8 pt-8 text-center">
-            <p className="tracking-wider">&copy; 2024 SACRED MAYHEM. ALL RIGHTS RESERVED.</p>
+            <p className="tracking-wider">&copy; 2026 SACRED MAYHEM. ALL RIGHTS RESERVED.</p>
             <Link href="/admin/login" className="text-xs text-gray-500 hover:text-black transition-colors mt-2 inline-block">
               Admin Access
             </Link>

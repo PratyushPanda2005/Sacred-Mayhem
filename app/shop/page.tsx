@@ -28,6 +28,7 @@ interface Product {
   onSale?: boolean
   originalPrice?: number
   stock: number
+  isSoldOut: boolean
 }
 
 interface CartItem extends Product {
@@ -63,7 +64,8 @@ export default function ShopPage() {
     sizes: ["S", "M", "L", "XL"],
     colors: ["BLACK", "WHITE"],
     isNew: new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-    stock: 10,
+    stock: p.stockQuantity || 0,
+    isSoldOut: p.is_sold_out || false,
     onSale: false,
     originalPrice: undefined
   })), [fetchedProducts]);
@@ -365,8 +367,11 @@ export default function ShopPage() {
                               SALE
                             </Badge>
                           )}
-                          {product.stock <= 5 && (
+                          {product.stock <= 5 && product.stock > 0 && (
                             <Badge className="bg-red-600 text-white font-bold tracking-wider">LOW STOCK</Badge>
+                          )}
+                          {product.isSoldOut && (
+                            <Badge className="bg-black text-white border-2 border-white font-bold tracking-wider">SOLD OUT</Badge>
                           )}
                         </div>
 
@@ -395,6 +400,12 @@ export default function ShopPage() {
                               className={`absolute inset-0 w-full h-full object-cover filter grayscale transition-opacity duration-500 ease-in-out ${hoveredProduct === product.id ? "opacity-100" : "opacity-0"
                                 }`}
                             />
+                            {/* Sold Out Overlay */}
+                            {product.isSoldOut && (
+                              <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10 transition-opacity duration-500">
+                                <span className="text-white font-black text-xl tracking-tighter border-2 border-white px-4 py-2 transform -rotate-12">SOLD OUT</span>
+                              </div>
+                            )}
                           </div>
                         </Link>
 
@@ -402,14 +413,14 @@ export default function ShopPage() {
                         <div className="absolute bottom-4 left-4 right-4">
                           <Button
                             onClick={() => addToCart(product)}
-                            disabled={product.stock === 0}
+                            disabled={product.isSoldOut || (product.stock === 0)}
                             className={`w-full bg-white text-black hover:bg-black hover:text-white border-2 border-white py-3 font-bold tracking-wider transition-all duration-300 disabled:opacity-50 ${hoveredProduct === product.id
                               ? "translate-y-0 opacity-100"
                               : "translate-y-4 opacity-0"
                               }`}
                           >
                             <ShoppingBag className="w-4 h-4 mr-2" />
-                            {product.stock === 0 ? "OUT OF STOCK" : "ADD TO CART"}
+                            {product.isSoldOut || product.stock === 0 ? "OUT OF STOCK" : "ADD TO CART"}
                           </Button>
                         </div>
                       </div>
@@ -439,8 +450,8 @@ export default function ShopPage() {
                           {/* Badges */}
                           <div className="absolute top-2 left-2 z-20 space-y-1">
                             {product.isNew && <Badge className="bg-white text-black font-bold text-xs">NEW</Badge>}
-                            {product.onSale && (
-                              <Badge className="bg-black text-white border border-white font-bold text-xs">SALE</Badge>
+                            {product.isSoldOut && (
+                              <Badge className="bg-black text-white border border-white font-bold text-xs uppercase">SOLD OUT</Badge>
                             )}
                           </div>
 
@@ -486,11 +497,11 @@ export default function ShopPage() {
                             <p className="text-sm text-gray-500">Stock: {product.stock}</p>
                             <Button
                               onClick={() => addToCart(product)}
-                              disabled={product.stock === 0}
+                              disabled={product.isSoldOut || product.stock === 0}
                               className="bg-black text-white hover:bg-white hover:text-black border-2 border-black px-6 py-2 font-bold tracking-wider transition-all duration-300 disabled:opacity-50"
                             >
                               <ShoppingBag className="w-4 h-4 mr-2" />
-                              {product.stock === 0 ? "OUT OF STOCK" : "ADD TO CART"}
+                              {product.isSoldOut || product.stock === 0 ? "OUT OF STOCK" : "ADD TO CART"}
                             </Button>
                           </div>
                         </div>
