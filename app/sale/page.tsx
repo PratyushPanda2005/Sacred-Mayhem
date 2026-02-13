@@ -163,7 +163,7 @@ export default function SalePage() {
                     <motion.img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-96 object-cover filter grayscale cursor-pointer"
+                      className="w-full h-96 object-cover filter cursor-pointer"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.3 }}
                     />

@@ -459,7 +459,7 @@ export default function ShopPage() {
                             <img
                               src={product.image || "/placeholder.svg"}
                               alt={product.name}
-                              className="w-full h-48 object-cover filter grayscale cursor-pointer hover:scale-105 transition-transform duration-300"
+                              className="w-full h-48 object-cover filter cursor-pointer hover:scale-105 transition-transform duration-300"
                             />
                           </Link>
                         </div>

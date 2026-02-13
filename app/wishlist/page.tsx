@@ -344,7 +344,7 @@ export default function WishlistPage() {
                         <motion.img
                           src={product.image}
                           alt={product.name}
-                          className="absolute inset-0 w-full h-full object-cover filter grayscale"
+                          className="absolute inset-0 w-full h-full object-cover filter"
                           initial={{ opacity: 1 }}
                           animate={{ opacity: hoveredProduct === product.id ? 0 : 1 }}
                           transition={{ duration: 0.5 }}
@@ -352,7 +352,7 @@ export default function WishlistPage() {
                         <motion.img
                           src={product.hoverImage}
                           alt={`${product.name} hover`}
-                          className="absolute inset-0 w-full h-full object-cover filter grayscale"
+                          className="absolute inset-0 w-full h-full object-cover filter"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: hoveredProduct === product.id ? 1 : 0 }}
                           transition={{ duration: 0.5 }}

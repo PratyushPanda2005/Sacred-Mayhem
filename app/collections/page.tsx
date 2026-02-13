@@ -91,7 +91,7 @@ export default function CollectionsPage() {
                     <img
                       src={collection.image || "/placeholder.svg"}
                       alt={collection.title}
-                      className="w-full h-96 lg:h-[500px] object-cover filter grayscale group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-96 lg:h-[500px] object-cover filter group-hover:scale-110 transition-transform duration-500"
                     />
                     <motion.div className="absolute inset-0 bg-white mix-blend-difference opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
                     {collection.featured && (

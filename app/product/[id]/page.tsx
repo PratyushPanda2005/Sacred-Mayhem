@@ -196,7 +196,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                     key={selectedImage}
                     src={product.images[selectedImage]}
                     alt={`${product.name} ${selectedImage + 1}`}
-                    className="w-full h-full object-cover filter grayscale"
+                    className="w-full h-full object-cover filter"
                     initial={{ opacity: 0, x: 100 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
@@ -261,7 +261,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                       <img
                         src={image || "/placeholder.svg"}
                         alt={`${product.name} ${index + 1}`}
-                        className="w-full h-full object-cover filter grayscale"
+                        className="w-full h-full object-cover filter"
                       />
                     </motion.button>
                   ))}

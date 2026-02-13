@@ -119,7 +119,7 @@ export default function NewArrivalsPage() {
                     <img
                       src={arrivals[0].image_url || "/placeholder.svg?height=500&width=400"}
                       alt={arrivals[0].name}
-                      className="w-full h-64 md:h-96 object-cover filter grayscale"
+                      className="w-full h-64 md:h-96 object-cover filter"
                     />
                     <div className="absolute inset-0 bg-white mix-blend-difference opacity-10 md:opacity-0 hover:opacity-30 transition-opacity duration-500" />
                   </motion.div>
@@ -156,7 +156,7 @@ export default function NewArrivalsPage() {
                         <motion.img
                           src={product.image_url || "/placeholder.svg?height=400&width=400"}
                           alt={product.name}
-                          className="w-full h-96 object-cover filter grayscale cursor-pointer"
+                          className="w-full h-96 object-cover filter cursor-pointer"
                           whileHover={{ scale: 1.05 }}
                           transition={{ duration: 0.3 }}
                         />

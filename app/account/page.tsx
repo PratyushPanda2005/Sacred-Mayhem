@@ -313,7 +313,7 @@ export default function AccountPage() {
                         <img
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
-                          className="w-16 h-16 object-cover filter grayscale"
+                          className="w-16 h-16 object-cover filter"
                         />
                         <div className="flex-1">
                           <h4 className="font-bold text-sm">{item.name}</h4>

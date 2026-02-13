@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { ArrowLeft, CreditCard, Truck, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -10,14 +10,26 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Navigation from "@/components/navigation"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
-const cartItems = [
-  { id: 1, name: "CHAOS OVERSIZED TEE", price: 180, quantity: 1, size: "L" },
-  { id: 2, name: "VOID CARGO PANTS", price: 320, quantity: 1, size: "M" },
-]
+interface CartItem {
+  id: string
+  name: string
+  price: number
+  image: string
+  quantity: number
+  selectedSize?: string
+  selectedColor?: string
+  category: string
+}
+
+const ADMIN_WHATSAPP_NUMBER = "+919535475154" // Change this to the actual admin number
 
 export default function CheckoutPage() {
+  const router = useRouter()
   const [step, setStep] = useState(1)
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [isLoaded, setIsLoaded] = useState(false)
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -31,15 +43,46 @@ export default function CheckoutPage() {
     expiryDate: "",
     cvv: "",
     nameOnCard: "",
+    phone: "",
   })
 
+  useEffect(() => {
+    const savedCart = localStorage.getItem("sacred-mayhem-cart")
+    if (savedCart) {
+      setCartItems(JSON.parse(savedCart))
+    }
+    setIsLoaded(true)
+  }, [])
+
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = 25
+  const shipping = subtotal > 200 ? 0 : 15
   const tax = subtotal * 0.08
   const total = subtotal + shipping + tax
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const generateWhatsAppMessage = () => {
+    const orderNumber = `SM-${Math.floor(100000 + Math.random() * 900000)}`
+    let message = `*NEW ORDER FROM SACRED MAYHEM*%0A%0A`
+    message += `*Order Number:* ${orderNumber}%0A`
+    message += `*Customer:* ${formData.firstName} ${formData.lastName}%0A`
+    message += `*Email:* ${formData.email}%0A`
+    message += `*Phone:* ${formData.phone}%0A%0A`
+    message += `*Shipping Address:*%0A${formData.address}, ${formData.city}, ${formData.state} ${formData.zipCode}, ${formData.country}%0A%0A`
+    message += `*ITEMS:*%0A`
+
+    cartItems.forEach((item) => {
+      message += `- ${item.name} (${item.selectedSize || "N/A"}) x ${item.quantity} - $${item.price * item.quantity}%0A`
+    })
+
+    message += `%0A*Subtotal:* $${subtotal.toFixed(2)}`
+    message += `%0A*Shipping:* $${shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}`
+    message += `%0A*Tax:* $${tax.toFixed(2)}`
+    message += `%0A*TOTAL:* $${total.toFixed(2)}`
+
+    return message
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -48,8 +91,42 @@ export default function CheckoutPage() {
       setStep(step + 1)
     } else {
       // Process order
-      window.location.href = "/order-confirmation"
+      const message = generateWhatsAppMessage()
+      const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER.replace(/\+/g, "")}?text=${message}`
+
+      // Save order info for confirmation page
+      localStorage.setItem("last-order", JSON.stringify({
+        items: cartItems,
+        total,
+        formData,
+        date: new Date().toLocaleDateString(),
+      }))
+
+      // Clear cart
+      localStorage.removeItem("sacred-mayhem-cart")
+
+      // Open WhatsApp and redirect
+      window.open(whatsappUrl, "_blank")
+      router.push("/order-confirmation")
     }
+  }
+
+  if (!isLoaded) return null
+
+  if (cartItems.length === 0 && step === 1) {
+    return (
+      <div className="bg-white text-black min-h-screen">
+        <Navigation />
+        <div className="pt-32 text-center">
+          <h1 className="text-3xl font-bold mb-8">YOUR CART IS EMPTY</h1>
+          <Link href="/shop">
+            <Button className="bg-black text-white hover:bg-white hover:text-black border-2 border-black px-8 py-4">
+              BACK TO SHOP
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -58,13 +135,13 @@ export default function CheckoutPage() {
 
       <div className="pt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Link href="/shop">
+          <Link href="/cart">
             <motion.div
               className="flex items-center space-x-2 mb-8 cursor-pointer hover:underline"
               whileHover={{ x: -5 }}
             >
               <ArrowLeft className="w-5 h-5" />
-              <span className="font-bold tracking-wider">BACK TO SHOP</span>
+              <span className="font-bold tracking-wider">BACK TO CART</span>
             </motion.div>
           </Link>
 
@@ -85,9 +162,8 @@ export default function CheckoutPage() {
                 {[1, 2, 3].map((stepNumber) => (
                   <div key={stepNumber} className="flex items-center">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                        step >= stepNumber ? "bg-black text-white" : "bg-white border-2 border-black text-black"
-                      }`}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= stepNumber ? "bg-black text-white" : "bg-white border-2 border-black text-black"
+                        }`}
                     >
                       {stepNumber}
                     </div>
@@ -146,6 +222,21 @@ export default function CheckoutPage() {
                             required
                           />
                         </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="phone" className="font-bold tracking-wider">
+                          PHONE NUMBER
+                        </Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          className="border-2 border-black focus:ring-0 focus:border-black"
+                          placeholder="+1 234 567 8900"
+                          required
+                        />
                       </div>
                     </div>
                   </motion.div>
@@ -315,7 +406,7 @@ export default function CheckoutPage() {
                     type="submit"
                     className="flex-1 bg-black text-white hover:bg-white hover:text-black border-2 border-black py-3 font-bold tracking-wider transition-all duration-300"
                   >
-                    {step === 3 ? "PLACE ORDER" : "CONTINUE"}
+                    {step === 3 ? "PLACE ORDER VIA WHATSAPP" : "CONTINUE"}
                   </Button>
                 </div>
               </form>
@@ -330,16 +421,16 @@ export default function CheckoutPage() {
             >
               <h2 className="text-2xl font-bold tracking-wider mb-6">ORDER SUMMARY</h2>
 
-              <div className="space-y-4 mb-6">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center border-b border-white pb-4">
+              <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2">
+                {cartItems.map((item, index) => (
+                  <div key={`${item.id}-${index}`} className="flex justify-between items-center border-b border-white pb-4">
                     <div>
-                      <h3 className="font-bold">{item.name}</h3>
+                      <h3 className="font-bold uppercase">{item.name}</h3>
                       <p className="text-sm">
-                        Size: {item.size} | Qty: {item.quantity}
+                        {item.selectedSize ? `Size: ${item.selectedSize} | ` : ""}Qty: {item.quantity}
                       </p>
                     </div>
-                    <p className="font-bold">${item.price * item.quantity}</p>
+                    <p className="font-bold">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -347,14 +438,14 @@ export default function CheckoutPage() {
               <div className="space-y-2 border-t border-white pt-4">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>${subtotal}</span>
+                  <span>${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping:</span>
-                  <span>${shipping}</span>
+                  <span>{shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Tax:</span>
+                  <span>Tax (8%):</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xl font-bold border-t border-white pt-2">
@@ -363,18 +454,18 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="mt-8 space-y-4">
-                <div className="flex items-center space-x-3">
+              <div className="mt-8 space-y-4 border-t border-white pt-6">
+                <div className="flex items-center space-x-3 text-gray-300">
                   <Truck className="w-5 h-5" />
                   <span className="text-sm">Free shipping on orders over $200</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 text-gray-300">
                   <Shield className="w-5 h-5" />
-                  <span className="text-sm">Secure checkout with SSL encryption</span>
+                  <span className="text-sm">Concierge WhatsApp confirmation</span>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 text-gray-300">
                   <CreditCard className="w-5 h-5" />
-                  <span className="text-sm">We accept all major credit cards</span>
+                  <span className="text-sm">Secure data handling</span>
                 </div>
               </div>
             </motion.div>

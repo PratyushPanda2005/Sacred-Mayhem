@@ -174,7 +174,7 @@ export default function CartPage() {
                         <img
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
-                          className="w-24 h-24 object-cover filter grayscale"
+                          className="w-24 h-24 object-cover filter"
                         />
                       </div>
 

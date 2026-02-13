@@ -127,7 +127,7 @@ export default function HomePage() {
           </motion.h1>
 
           <motion.p
-            className="text-xl md:text-2xl font-light tracking-widest mb-12"
+            className="text-xl md:text-2xl font-light tracking-widest mb-12 text-black"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2.5, duration: 1 }}
@@ -198,7 +198,7 @@ export default function HomePage() {
                       <img
                         src={hoveredProduct === product.id ? product.hoverImage : product.image}
                         alt={product.name}
-                        className="w-full h-full object-cover filter grayscale transition-all duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover filter transition-all duration-500 group-hover:scale-105"
                       />
 
                       <div className="absolute top-4 left-4 bg-black text-white px-3 py-1 text-xs font-bold tracking-wider space-y-2">
