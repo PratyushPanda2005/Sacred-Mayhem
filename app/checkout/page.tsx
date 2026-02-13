@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import Navigation from "@/components/navigation"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { saveCheckoutUser } from "@/lib/users"
 
 interface CartItem {
   id: string
@@ -87,12 +88,41 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Store user details as soon as they complete Step 1 (Contact Info)
+    if (step === 1) {
+      saveCheckoutUser({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zip_code: formData.zipCode,
+        country: formData.country,
+      }).catch(console.error)
+    }
+
     if (step < 3) {
       setStep(step + 1)
     } else {
       // Process order
       const message = generateWhatsAppMessage()
       const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER.replace(/\+/g, "")}?text=${message}`
+
+      // Final save to capture full shipping details
+      saveCheckoutUser({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zip_code: formData.zipCode,
+        country: formData.country,
+      }).catch(console.error)
 
       // Save order info for confirmation page
       localStorage.setItem("last-order", JSON.stringify({
