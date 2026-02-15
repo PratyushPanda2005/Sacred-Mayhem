@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Trash2, Mail, Phone, Calendar, MapPin, User, Hash } from "lucide-react"
+import { Trash2, Mail, Phone, Calendar, MapPin, User, Hash, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 import {
     Dialog,
     DialogContent,
@@ -12,7 +14,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog"
-import { getAllUsers, deleteUser, type UserRecord } from "@/lib/users"
+import { getAllUsers, deleteUser, toggleUserConfirmation, type UserRecord } from "@/lib/users"
 import { toast } from "sonner"
 
 export default function UsersPage() {
@@ -50,12 +52,25 @@ export default function UsersPage() {
         }
     }
 
+    const handleToggleConfirmation = async (e: React.MouseEvent, id: string, currentStatus: boolean) => {
+        e.stopPropagation()
+        const newStatus = !currentStatus
+        try {
+            await toggleUserConfirmation(id, newStatus)
+            setUsers(users.map((u) => u.id === id ? { ...u, is_confirmed: newStatus } : u))
+            toast.success(newStatus ? "Order confirmed" : "Confirmation removed")
+        } catch (error) {
+            console.error("Error toggling confirmation:", error)
+            toast.error("Failed to update confirmation status")
+        }
+    }
+
     return (
         <div className="p-8 space-y-8">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tighter">USERS</h1>
-                    <p className="text-gray-500 tracking-widest mt-2">MANAGE REGISTERED CUSTOMERS</p>
+                    <h1 className="text-4xl font-black tracking-tighter">ORDERS</h1>
+                    <p className="text-gray-500 tracking-widest mt-2">MANAGE ORDERS</p>
                 </div>
                 <Button
                     onClick={fetchUsers}
@@ -90,6 +105,7 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS city TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS state TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS zip_code TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS country TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_confirmed BOOLEAN DEFAULT FALSE;
 
 -- Ensure email is unique for upsert to work
 ALTER TABLE users ADD CONSTRAINT users_email_key UNIQUE (email);`}
@@ -111,12 +127,21 @@ ALTER TABLE users ADD CONSTRAINT users_email_key UNIQUE (email);`}
                                     <h3 className="text-xl font-bold uppercase truncate pr-8">
                                         {user.first_name} {user.last_name}
                                     </h3>
-                                    <button
-                                        onClick={(e) => user.id && handleDelete(e, user.id)}
-                                        className="text-red-500 hover:text-red-700 transition-colors p-2"
-                                    >
-                                        <Trash2 className="w-5 h-5" />
-                                    </button>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={(e) => user.id && handleToggleConfirmation(e, user.id, !!user.is_confirmed)}
+                                            className={`transition-all p-2 rounded-full hover:bg-gray-100 ${user.is_confirmed ? 'text-green-500 scale-110' : 'text-gray-300'}`}
+                                            title={user.is_confirmed ? "Confirmed" : "Mark as confirmed"}
+                                        >
+                                            <CheckCircle2 className={`w-5 h-5 ${user.is_confirmed ? 'fill-green-50' : ''}`} />
+                                        </button>
+                                        <button
+                                            onClick={(e) => user.id && handleDelete(e, user.id)}
+                                            className="text-red-500 hover:text-red-700 transition-colors p-2"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2 text-sm">
@@ -153,12 +178,35 @@ ALTER TABLE users ADD CONSTRAINT users_email_key UNIQUE (email);`}
             <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
                 <DialogContent className="max-w-2xl border-4 border-black p-0 overflow-hidden bg-white">
                     <DialogHeader className="bg-black text-white p-8">
-                        <DialogTitle className="text-3xl font-black tracking-tighter uppercase mb-2">
-                            CUSTOMER DETAILS
-                        </DialogTitle>
-                        <DialogDescription className="text-gray-400 tracking-widest uppercase">
-                            FULL PROFILE FOR {selectedUser?.first_name} {selectedUser?.last_name}
-                        </DialogDescription>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <DialogTitle className="text-3xl font-black tracking-tighter uppercase mb-2">
+                                    CUSTOMER DETAILS
+                                </DialogTitle>
+                                <DialogDescription className="text-gray-400 tracking-widest uppercase">
+                                    FULL PROFILE FOR {selectedUser?.first_name} {selectedUser?.last_name}
+                                </DialogDescription>
+                            </div>
+                            <div className="flex items-center space-x-2 bg-white/10 p-2 rounded-lg border border-white/20">
+                                <Switch
+                                    id="confirm-order"
+                                    checked={!!selectedUser?.is_confirmed}
+                                    onCheckedChange={(checked) => {
+                                        if (selectedUser?.id) {
+                                            handleToggleConfirmation(
+                                                { stopPropagation: () => { } } as any,
+                                                selectedUser.id,
+                                                !checked
+                                            );
+                                            setSelectedUser({ ...selectedUser, is_confirmed: checked });
+                                        }
+                                    }}
+                                />
+                                <Label htmlFor="confirm-order" className="text-xs font-bold cursor-pointer">
+                                    {selectedUser?.is_confirmed ? 'CONFIRMED' : 'CONFIRM ORDER'}
+                                </Label>
+                            </div>
+                        </div>
                     </DialogHeader>
 
                     <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">

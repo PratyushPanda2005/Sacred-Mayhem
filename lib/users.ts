@@ -12,6 +12,7 @@ export interface UserRecord {
     zip_code?: string;
     country?: string;
     created_at?: string;
+    is_confirmed?: boolean;
 }
 
 /**
@@ -80,6 +81,21 @@ export async function deleteUser(id: string) {
 
     if (error) {
         console.error(`Error deleting user ${id}:`, error);
+        throw error;
+    }
+}
+
+/**
+ * Toggle user confirmation status.
+ */
+export async function toggleUserConfirmation(id: string, isConfirmed: boolean) {
+    const { error } = await supabase
+        .from('users')
+        .update({ is_confirmed: isConfirmed })
+        .eq('id', id);
+
+    if (error) {
+        console.error(`Error toggling user confirmation ${id}:`, error);
         throw error;
     }
 }

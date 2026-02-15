@@ -87,10 +87,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         Lookbook
                     </Link>
                     <Link href="/admin/orders" className="block p-2 hover:bg-gray-200 rounded">
-                        Orders
+                        Users
                     </Link>
                     <Link href="/admin/users" className="block p-2 hover:bg-gray-200 rounded">
-                        Users
+                        Orders
                     </Link>
                     <Link href="/admin/shops" className="block p-2 hover:bg-gray-200 rounded">
                         Shops
